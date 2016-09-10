@@ -42,7 +42,75 @@
 \begin{enumerate}
   \item In each case below, use the Master Theorem (MT) to provide tight asymptotic bounds for the //
     indicated recurrence. (For each case, assume $T(1) = \Theta(1)$.)
-\end{enumerate}<++>
+
+    \begin{enumerate}
+      \item $T(n) = 2 T( \frac{n}{4} ) + n \log n$, if $n > 1$.
+      \item $T(n) = 2 T( n^{\frac{1}{4}} ) + 1$, if $n > 1$.
+      \item $T(n) = a T( \frac{n}{b} ) + dn$, if $n > 1$, where $ a \geq 1$ and $b > 1$ are integer constants and $d>0$ is a real constant. Recall
+        that this is the recurrence solved by the Little Master Theorem seen in class. There we derived the solution by iterating the recurrence from
+        first principles; here you should derive it directly from the MT.
+    \end{enumerate}
+
+  \item
+    Let $y$ and $z$ be $n$-bit integers, where $n$ is a power of 3. Consider the following divide-and-conquer algorithm to compute the product $yz$.
+
+    Break $y$ into three $\frac{n}{3}$-bit pieces, $a$, $b$, and $c$; thus $y = a 2^{2n/3} + b 2^{n/3} + c$, where the powers of 2 denote appropriate
+    bit-shifting. Similarly, break $z$ into pieces $d,e,$ and $f$. Now compute $yz$ recursively as:
+    \[ yz = ad \ 2^{4n/3} + (ae+bd) 2^n + (af + be +cd) 2^{2n/3} + (bf+ce)2^{n/3} + cf. \]
+    You may ignore the issue of ``carries'' throughout.
+    \begin{enumerate}
+      \item  What is the running time of this algorithm as a function of $n$? Justify your answer by writing down and analyzing the recurrence.
+
+        With a view towards improving the running time in part (a), consider the following approach, where we first compute certain intermediate
+        products $(r_1, \dots, r_6)$ and use these along with additions and bit-shifts to compute $yz$.
+        \[ r_1 = ?, r_2 = (a+b)(d+e), r_3 = be, r_4 = ?, r_5 = cf, r_6 = ?, \text{ and } yz=? .\]
+
+      \item Fill in the missing information above for $r_1, r_4$, and $r_6$ and show how to compute $yz$.
+
+      \item What is the running time of this algorithm and how does it compare with the one we designed in class? Justify your answer by writing down
+        and analyzing the recurrence.
+    \end{enumerate}
+
+  \item Prof. M.A. Tricks claims to have discovered a new algorithm for multiplying two $n \times n$ matrices. His algorithm is similar to Strassen's,
+    except that it partitions each matrix into submatrices of size $n/8 \times n/8$ and computes the desired product using $k$ recursive matrix
+    multiplications and a constant number of matrix additions. (Assume, for simplicity, that $n$ is a power of 8). What is the \emph{largest} value of
+    $k$ for which the professor's algorithm beats the running time of Strassen's algorithm? Justify your answer carefully using the Master Theorem.
+
+  \item In class, we discussed an $O(n \log n)$-time divide-and-conquer algorithm to find the closest pair among $n$ points in the plane, under the
+    Euclidean distance metric. Suppose that we wish to now solve the problem under the Manhattan (or city-block) distance metric, defined as follows:
+    For points $p = (x_p, y_p)$ and $q = (x_q, y_q)$, the \emph{Manhattan distance} $d(p,q) = | x_p = x_q| + |y_p - y_q|$. Discuss how to modify the
+    above algorithm to solve this problem in $O ( n \log n )$ time.
+
+    It is sufficient to \emph{carefully} describe and justify the changes needed in words; pseudocode is not required. Pay particular attention to
+    justifying how many points need to be checked during each step of the ``conquer'' phase. Also analyze the running time briefly.
+
+  \item Recall the (worst-case) linear-time divide-and-conquer algorithm for finding the $k$th smallest of $n$ reals, where we used groups of size 5.
+    Suppose that we use the same algorithm but with groups of size $g$ for some positive integer constant $g$. Derive the recurrence relation for this
+    algorithm as a function of $n$ and $g$. (Consider separately the case where $g$ is even and where it is odd).
+
+    Based on your recurrences, determine the smallest integer $g$ for which the algorithm runs in linear time and justify your answer.
+
+    You may ignore floors and ceilings in your derivation and you do not have to write the algorithm itself.
+
+  \item Let $S$ be a set containing all but one of the integers in the range $[0, n]$, where $n+1$ is a power of 2. Assume that $S$ is implemented as
+    a linked list. (The list is not necessarily in sorted order.) One way to find the missing integer efficiently, in $\Theta(n)$ time, is to insert
+    the elements of $S$ into an array $I[0:n]$ and then scan $I$. However, this assumes that one can access any integer, $i,$, in $S$ in constant time
+    with a single operation. Suppose that one adops a different (more restrictive) computational model, where we are able to access only the $j$th bit
+    in the inary representation of integer $i$ in constant time. Give a divide-and-conquer algorithm to compute the missing integer in $\Theta(n)$
+    time even under this model.
+
+    Your answer should include $(a)$ a brief description of the main ideas from which the correctness of your algorithm should be evident, $(b)$
+    pseudocode, and $(c)$ an analysis of the running time.
+
+  \item Let $S$ be a set of $n \geq 2$ distinct real numbers. Let $\max(S)$ and $\min(S)$ be the largest and smallest numbers in $S$, respectively.
+    Define $avg\_gap(S)$ to be $\frac{1}{n-1} (\max(S) - \min(S))$; this is the average distance on the real line between consecutive elements of $S$
+    when $S$ is in sorted order. Give a divide-and-conquer algorithm to compute distinct elements $x$ and $y$ in $S$ such that $|x-y| \leq
+    avg\_gap(S)$. The running time should be $O(n)$. (Note, that the given set $S$ is not necessarily in sorted order. You cannot afford to sort it
+    since this would take $O(n \log N)$ time.)
+
+    Your answer should include $(a)$ a brief description of the main ideas from which the correctness of your algorithm should be evident, $(b)$
+    pseudocode, and $(c)$ an analysis of the running time.
+\end{enumerate}
 
 \end{document}
 
