@@ -40,8 +40,8 @@
 \maketitle
 
 \begin{enumerate}
-  \item In each case below, use the Master Theorem (MT) to provide tight asymptotic bounds for the //
-    indicated recurrence. (For each case, assume $T(1) = \Theta(1)$.)
+  \item In each case below, use the Master Theorem (MT) to provide tight asymptotic bounds for the
+    indicated recurrence. (For each case, assume ${T(1) = \Theta(1)}$.)
 
     \begin{enumerate}
       \item $T(n) = 2 T( \frac{n}{4} ) + n \log n$, if $n > 1$.
@@ -50,6 +50,41 @@
         that this is the recurrence solved by the Little Master Theorem seen in class. There we derived the solution by iterating the recurrence from
         first principles; here you should derive it directly from the MT.
     \end{enumerate}
+
+    \begin{solution}
+      \begin{enumerate}
+        \item $n^{\log_4 2} = n^{1/2}$. and $n \log n = \Omega(n^{1/2 + \varepsilon})$ with $\varepsilon=\frac{1}{4}$, so the $\varepsilon$-condition holds. We know
+          \begin{align*}
+            \frac{2}{4} n \log \left( \frac{n}{4} \right) &= \frac{n}{2} \log n - \frac{n}{2} \log 4 \\
+            &\leq \frac{n}{2} \log n
+          \end{align*}
+
+          Therefore, the regularity condition is satisfied with $c = \frac{1}{2}$. Thus, we can apply the third case of the Master Theorem to get ${T(n) = \Theta( n \log n)}$.
+
+        \item
+          Let $m = \log n$ and $S(m) = T(2^m)$. Then our recurrence can be reformulated as
+          \begin{align*}
+            S(m) &= T(2^m) \\
+            &= T(n) \\
+            &= 2 T(n^{1/4}) + 1 \\
+            &= 2 T \left( (2^m)^{1/4} \right) + 1 \\
+            &= 2 T \left( 2^{m/4} \right) + 1 \\
+            &= 2 S \left( \frac{m}{4} \right) + 1
+          \end{align*}
+
+          From here, we can apply the Master Theorem. We have $m^{\log_4 2} = m^{1/2}$ and $1 = O(m^{1/2 - \varepsilon})$ for any $0<\varepsilon<\frac{1}{2}$. So the $\varepsilon$-condition holds, and we have $S(m) = \Theta( m^{1/2} )$ by the first case of the Master Theorem. Therefore, we get
+          \begin{align*}
+            T(n) &= T(2^m) \\
+            &= S(m) \\
+            &= \Theta(m^{1/2}) \\
+            &= \Theta( (\log n)^{1/2} )
+          \end{align*}
+
+        \item
+          First, assume $a > b$. Then $\log_b a > 1$. Therefore, we can write $\log_b a = 1 + \varepsilon$ for some $\varepsilon>0$, and $dn = O( n^{\log_b a - \varepsilon})$. Then by the Master Theorem, $T(n) = \Theta( n^{\log_b a} )$.
+      \end{enumerate}<++>
+
+    \end{solution}
 
   \item
     Let $y$ and $z$ be $n$-bit integers, where $n$ is a power of 3. Consider the following divide-and-conquer algorithm to compute the product $yz$.
