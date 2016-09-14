@@ -81,8 +81,24 @@
           \end{align*}
 
         \item
-          First, assume $a > b$. Then $\log_b a > 1$. Therefore, we can write $\log_b a = 1 + \varepsilon$ for some $\varepsilon>0$, and $dn = O( n^{\log_b a - \varepsilon})$. Then by the Master Theorem, $T(n) = \Theta( n^{\log_b a} )$.
-      \end{enumerate}<++>
+          First, assume $a > b$. Then $\log_b a > 1$. Therefore, we can write $\log_b a = 1 + \varepsilon$ for some $\varepsilon>0$, and $dn = O(
+          n^{\log_b a - \varepsilon})$. Then by the first case of the Master Theorem, $T(n) = \Theta( n^{\log_b a} )$.
+
+          Now assume $a = b$. Then $\log_b a = 1$, and $dn = \Theta( n^{\log_b a} )$. By the second case of the Master Theorem, we have $T(n) = \Theta( n \log n )$.
+
+          Finally, assume $a < b$. Then $\log_b a < 1$, so we can write $\log_b a = 1 - \varepsilon$ for some $\varepsilon > 0$. With this, $dn =
+          \Omega( n^{\log_b a + \varepsilon} )$, so the $\varepsilon$-condition is satisfied. Also, the regularity condition holds trivially because $a \frac{dn}{b} = \frac{a}{b} dn$ and
+          $\frac{a}{b} < 1$. Thus by the third of the Master Theorem, we know $T(n) = \Theta( n )$.
+
+          Combining these results, we get the statement of the Little Master Theorem:
+          \[ T(n) =
+            \begin{cases}
+              \Theta(n^{\log_b a}) \quad &\text{ if } a > b \\
+              \Theta(n \log n) \quad &\text{ if } a = b \\
+              \Theta(n) \quad &\text{ if } a < b
+            \end{cases}
+          \]
+      \end{enumerate}
 
     \end{solution}
 
@@ -106,10 +122,105 @@
         and analyzing the recurrence.
     \end{enumerate}
 
+    \begin{solution}
+        \begin{enumerate}
+          \item
+            This algorithm has a running time of $\Theta(n^2)$. As it is written, we split our larger problem into 9 problems of size $\frac{n}{3}$, and have divide and conquer steps
+            that involve choosing the correct bits to split at and adding results, both of which are $O(n)$ operations. Our recurrence is therefore
+            \[ T(n) =
+              \begin{cases}
+                1 \quad &\text{ if } n = 1 \\
+                9 T \left( \frac{n}{3} \right) + dn &\text{ else}
+              \end{cases}
+            \]
+
+            Using the first case of the Little Master Theorem, we find that $T(n) = \Theta( n^{\log_3 9} ) = \Theta( n^2 )$.
+
+          \item
+            We will have the following intermediates:
+            \begin{align*}
+              r_1 &= (b+c)(e+f) \\
+              &= be + bf + ce + cf \\
+              r_2 &= (a+b)(d+e) \\
+              &= ad + ae + bd + be \\
+              r_3 &= be \\
+              r_4 &= ad \\
+              r_5 &= cf \\
+              r_6 &= (a+c)(d+f) \\
+              &= ad + af + cd + cf
+            \end{align*}
+
+            Then we can express
+            \begin{align*}
+                ad &= r_4 \\
+                ae + bd &= r_2 - r_4 - r_3 \\
+                af + be + cd &= r_6 -r_4 - r_5 + r_3 \\
+                bf + ce &= r_1 - r_3 - r_5 \\
+                cf = r_5
+            \end{align*}
+
+            Therefore,
+            \begin{align*}
+              yz &= ad \ 2^{4n/3} + (ae + bd) 2^n + (af + be + cd) 2^{2n/3} + (bf + ce) 2^{n/3} + cf \\
+              &= r_4 \ 2^{4n/3} + (r_2 - r_4 - r_3) 2^n + (r_6 - r_4 - r_5 + r_3) 2^{2n/3} + (r_1 - r_3 - r_5) 2^{n/3} + r_5
+            \end{align*}
+
+          \item
+            This new algorithm involves dividing our problem into 6 subproblems of size $\frac{n}{3}$ with the same $O(n)$ divide and conquer steps.
+            Therefore, we get the recurrence
+            \[ T(n) =
+              \begin{cases}
+                1 \quad &\text{if } n = 1 \\
+                6 T \left( \frac{n}{3} \right) + dn \quad &\text{else}
+              \end{cases}
+            \]
+
+            Using the first case of the Little Master Theorem, we find ${T(n) = \Theta( n^{\log_3 6} ) = \Theta( n^{1.6309 \dots} )}$.
+
+            The algorithm we found in class gives a funning time of $\Theta( n^{1.59 \dots})$, so our new algorithm has a slightly worse asymptotic
+            running-time.
+        \end{enumerate}
+    \end{solution}
+
   \item Prof. M.A. Tricks claims to have discovered a new algorithm for multiplying two $n \times n$ matrices. His algorithm is similar to Strassen's,
     except that it partitions each matrix into submatrices of size $n/8 \times n/8$ and computes the desired product using $k$ recursive matrix
     multiplications and a constant number of matrix additions. (Assume, for simplicity, that $n$ is a power of 8). What is the \emph{largest} value of
     $k$ for which the professor's algorithm beats the running time of Strassen's algorithm? Justify your answer carefully using the Master Theorem.
+
+    \begin{solution}
+
+      For Strassen's algorithm, we get a running time of $\Theta(n^{\log_2 7})$. This is the running time we are aiming to beat. With the proposed
+      algorithm, the problem is divided into $k$ subproblems of size $\frac{n}{2}$. If we let $T(n)$ be the time necessary to multiply two $n \times
+      n$ matrices together, we get the recurrence
+      \[ T(n) =
+        \begin{cases}
+          1 \quad &\text{if } n = 1 \\
+          k T \left( \frac{n}{8} \right) + d n^2 \quad &\text{else}
+        \end{cases}
+      \]
+
+      First, let's assume that $k < 64$, that is $k \leq 63$. Then $\log_8 k < 2$, so $\log_8 k = 2 - \varepsilon$ for some $\varepsilon > 0$.
+      Therefore $dn^2 = \Theta( n^{\log_8 k + \varepsilon} )$ and the $\varepsilon$ condition is satisfied. We also immediately see that $k d \left(
+      \frac{n}{8} \right)^2 \leq \frac{63}{64} d n^2$, so the regularity condition is also satisfied. Applying the third case of the Master Theorem
+      gives $T(n) = \Theta(n^2)$. Thus the new algorithm is better than Strassen's algorithm for $k < 64$.
+
+      Next, assume $k = 64$. Then $\log_8 64 = 2$ and $d n^2 = \Theta( n^{\log_8 64} )$. By the second case of the Master Theorem, $T(n) = \Theta( n^2
+      \log n )$. For $k = 64$ the new algorithm once again gives a better algorithm than Strassen's.
+
+      Finally, assume $k>64$. Then $\log_8 k > 2$. Therefore, $\log_8 k = 2 + \varepsilon$ for some $\varepsilon>0$ and $dn^2 = O( n^{\log_8 k +
+      \varepsilon} )$. Applying the first case of the Master Theorem gives $T(n) = \Theta( n^{\log_8 k} )$. We need to compare this to the $\Theta(
+      n^{\log_2 7} )$ running time given by Strassen's algorithm. This new algorithm is faster if and only if
+      \begin{align*}
+        & \log_8 k < \log_2 7 \\
+        \Leftrightarrow \ & k < 8^{\log_2 7} \\
+        \Leftrightarrow \ & k < 2^{3 \log_2 7} \\
+        \Leftrightarrow \ & k < 2^{\log_2 7^3} \\
+        \Leftrightarrow \ & k < 7^3 = 343
+      \end{align*}
+
+      Combining the three cases, we see the new algorithm outperforms Strassen's if the problem is divided such that $k < 343$.
+
+    \end{solution}
 
   \item In class, we discussed an $O(n \log n)$-time divide-and-conquer algorithm to find the closest pair among $n$ points in the plane, under the
     Euclidean distance metric. Suppose that we wish to now solve the problem under the Manhattan (or city-block) distance metric, defined as follows:
