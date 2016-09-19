@@ -232,7 +232,52 @@
 
     \begin{solution}
 
-      Much of the algorithm for the Euclidean metric remains unchanged with the Manhattan metric. We still find the
+      Much of the algorithm for the Euclidean metric remains unchanged with the Manhattan metric. We still begin by presorting the points by
+      nondecreasing $y$-values and sorting points by nondecreasing $x$-value in a separate copy of the array. If the set of points $S$ has $|S| \leq
+      3$, we can directly compute the closest point by calculating the distance between all possible pairs. For any larger sets we find the median
+      $x$-value for the points (in constant time) from our array sorted by $x$-values. We then split both arrays of points into subarrays based on
+      whether their $x$-value is larger or smaller than this median value. We notice that these subarrays we create are sorted exactly as the
+      originals were. We then recursively find the closest pair and minimum distance on the points to the left and to the right of the vertical line
+      dividing the points. We then take the minimum of the two distances and the corresponding pair.
+
+      The major difference between the implementation with the different metrics comes in finding the closest pair spanning the dividing line. For the
+      same reasons as for the Euclidean metric, we only need to scan points that are within the $2 \delta$ by $\delta$ rectangle, $R$, spanning the dividing
+      line as we move this rectangle vertically. Under this new metric, that rectangle may contain more points than before. In the proof of the
+      sparseness lemma given in class, we used the fact that the farthest two points within a single $\frac{\delta}{2}$ by $\frac{\delta}{2}$
+      rectangle may be apart was $\frac{\delta}{\sqrt{2}} < \delta$. With the Manhattan metric, two points in the same rectangle can be a distance
+      $\delta$ apart. Therefore we get the following:
+
+      \begin{lemma}[Sparseness Lemma]
+        Under the Manhattan metric, the rectangle $R$ can contain at most 12 points.
+      \end{lemma}
+
+      \begin{proof}
+
+        Suppose $R$ contains at least 13 points. Divide $R$ into 12 rectangles of width $\frac{\delta}{3}$ and height $\frac{\delta}{2}$. Notice that
+        each of these rectangles is completely contained on one side of the dividing line. By the pigeonhole principle, at least one of these
+        rectangles must contain at least 2 points. Within this rectangle,
+        \[ d(p,q) \leq \frac{\delta}{3} + \frac{\delta}{2} = \frac{5 \delta}{6} < \delta .\]
+
+        But by construction, any two points on the same side of the dividing line must be at least a distance of $\delta$ apart. We have reached a
+        contradiction. Therefore, $R$ must contain no more than 12 points.
+
+      \end{proof}
+
+      By this sparseness lemma, as we scan the for points with a minimal distance that span the dividing line using our rectangle $R$, we only need to
+      check at most 11 other points at a time. Thus this portion of the algorithm has a running time of $11n$ at most.
+
+      Let $T(n)$ be the time required to find the closest pair of points in a set $S$ that has been presorted. We have the recurrence
+      \[ T(n) =
+        \begin{cases}
+          O(1) &\text{if } n \leq 3 \\
+          2 T \left( \frac{n}{2} \right) + O(n) &\text{else}
+        \end{cases}
+      \]
+
+      This recurrence is true because at each step we split our set in half using our vertical dividing line, and the time required to check for a
+      closest pair across the dividing line is $O(n)$ by the argument given above. Applying the Little Master Theorem to our recurrence gives $T(n) =
+      \Theta( n \log n )$. This calculation is done assuming our set of points has been presorted. When we add the time required for this presort, we
+      get an overall running time that is $\Theta(n \log n)$ because the sorts can be performed in $\Theta(n \log n)$ time as well.
 
     \end{solution}
 
