@@ -307,6 +307,17 @@
       discard only these values, leaving $\approx n - \frac{n(g+1)}{4g} = \frac{4ng - n(g+1)}{4g}$ values to use in the recursive call. This
       contributes a $T \left( \frac{4ng - n(g+1)}{4g} \right)$ to the worst case running time of our algorithm.
 
+      This gives us the recurrence
+      \[ T(n) =
+        \begin{cases}
+          O(1) &\text{if } n \leq 5 \\
+          T \left( \frac{n}{g} \right) + T \left( \frac{4ng - n(g+1)}{4g} \right) + O(n) &\text{else}
+        \end{cases}
+      \]
+
+      As in class, we will look for $g$ that makes
+      \[ \frac{n}{g} + \frac{4ng - n(g+1)}{4g} < n\]
+
     \end{solution}
 
   \item Let $S$ be a set containing all but one of the integers in the range $[0, n]$, where $n+1$ is a power of 2. Assume that $S$ is implemented as
