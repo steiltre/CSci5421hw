@@ -289,6 +289,26 @@
 
     You may ignore floors and ceilings in your derivation and you do not have to write the algorithm itself.
 
+    \begin{solution}
+
+      In this algorithm, we divide our set of $n$ integers into $\frac{n}{g}$ groups of $g$ elements and directly compute the median of each group
+      (requiring $O(n)$ time). Then we take the set of all medians and recursively take the median of that group. Call this median $m^\ast$. We then
+      sort our set into values greater than $m^\ast$ and values less than $m^\ast$. Our selection algorithm is then called recursively on one of these
+      sets based on the relative position we are searching for. This selection algorithm therefore requires two recursive calls to itself.
+
+      Let $T(n)$ be the worst case number of comparisons performed on an input of size $n$. Whether $g$ is even or odd, we require a number of medians
+      to be calculated directly, giving a $O(n)$ term. We then calculate the median of these $\frac{n}{g}$ medians recursively, contributing a $T
+      \left( \frac{n}{g} \right)$ term.
+
+      Assume $g$ is odd. After calculating $m^\ast$, we are guaranteed that at least approximately $\frac{n}{2g}$ medians are greater than $m^\ast$, and within
+      each of those groups $\frac{g+1}{2}$ values are greater than or equal to the respective median. We get the same result for values less than
+      $m^\ast$. Therefore, when sorting values that are less than or greater than $m^\ast$, we are able to discard at least $\approx
+      \frac{n (g+1)}{4g}$ values from the set we are going to recursively run our selection algorithm on. In the worst case scenario, we are able to
+      discard only these values, leaving $\approx n - \frac{n(g+1)}{4g} = \frac{4ng - n(g+1)}{4g}$ values to use in the recursive call. This
+      contributes a $T \left( \frac{4ng - n(g+1)}{4g} \right)$ to the worst case running time of our algorithm.
+
+    \end{solution}
+
   \item Let $S$ be a set containing all but one of the integers in the range $[0, n]$, where $n+1$ is a power of 2. Assume that $S$ is implemented as
     a linked list. (The list is not necessarily in sorted order.) One way to find the missing integer efficiently, in $\Theta(n)$ time, is to insert
     the elements of $S$ into an array $I[0:n]$ and then scan $I$. However, this assumes that one can access any integer, $i,$, in $S$ in constant time
