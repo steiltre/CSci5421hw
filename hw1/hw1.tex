@@ -318,6 +318,15 @@
       As in class, we will look for $g$ that makes
       \[ \frac{n}{g} + \frac{4ng - n(g+1)}{4g} < n\]
 
+      This gives
+      \begin{align*}
+        &4n + 4ng - ng - n < 4ng \\
+        &\Leftrightarrow n (3 - g) < 0\\
+        &\Leftrightarrow g \geq 5
+      \end{align*}
+
+      So we expect our selection algorithm to run in linear time for $g \geq 5$.
+
     \end{solution}
 
   \item Let $S$ be a set containing all but one of the integers in the range $[0, n]$, where $n+1$ is a power of 2. Assume that $S$ is implemented as
