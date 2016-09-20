@@ -310,7 +310,7 @@
       This gives us the recurrence
       \[ T(n) =
         \begin{cases}
-          O(1) &\text{if } n \leq 5 \\
+          O(1) &\text{if } n \leq g \\
           T \left( \frac{n}{g} \right) + T \left( \frac{4ng - n(g+1)}{4g} \right) + O(n) &\text{else}
         \end{cases}
       \]
@@ -326,6 +326,29 @@
       \end{align*}
 
       So we expect our selection algorithm to run in linear time for $g \geq 5$.
+
+      Next, assume $g$ is even. Similar to the $g$ even case, our worst case scenario is able to eliminate some numbers from the recursive call after
+      $m^\ast$ is calculated. In this case, we are able to eliminate $\frac{n}{4}$ numbers, leaving us with $n - \frac{n}{4} = \frac{3n}{4}$
+      numbers to use in the recursive call to the selection algorithm. Therefore, we have the recurrence
+      \[ T(n) =
+        \begin{cases}
+          O(1) &\text{if } n \leq g \\
+          T \left( \frac{n}{g} \right) + T \left( \frac{3n}{4} \right) + O(n) &\text{else}
+        \end{cases}
+      \]
+
+      We look for the values of $g$ such that
+      \[ \frac{n}{g} + \frac{3n}{4} < n .\]
+
+      We find
+      \begin{align*}
+        &\frac{n}{g} + \frac{3n}{4} < n \\
+        &\Leftrightarrow \frac{n}{g} < \frac{n}{4} \\
+        &\Leftrightarrow g > 4
+      \end{align*}
+
+      So for $g$ odd, we need $g \geq 5$ to guarantee linear time. For $g$ even, we need $g \geq 6$ to guarantee linear time. Thus the smallest $g$
+      which allows the algorithm to run in linear time is 5.
 
     \end{solution}
 
