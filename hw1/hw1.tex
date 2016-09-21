@@ -7,12 +7,14 @@
 
 \title{CSci 5421 Homework 1 }
 \date{9/21/16}
-\author{Trevor Steil}
+\author{Trevor Steil (5088505)}
 
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{esint}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{corollary}{Corollary}[section]
@@ -362,6 +364,72 @@
     Your answer should include $(a)$ a brief description of the main ideas from which the correctness of your algorithm should be evident, $(b)$
     pseudocode, and $(c)$ an analysis of the running time.
 
+    \begin{solution}
+
+      \begin{enumerate}
+        \item
+          Because $n+1$ is a power of 2, we know that our our set of numbers together with the missing number must contain all possible binary
+          representations that are $\log n$ bits long. Because of this fact we can pick out the $i-$th bit of our missing number by checking $i-$th
+          bit of every integer of our set. There will either be fewer 0s or fewer 1s. The $i$-th bit of the missing number will correspond to the
+          group that had fewer elements.
+
+          Implementing this program naively will result in a runtime of $O( n \log n)$ because we would be looping over each of the $\log n$ bits of
+          the $n$ integers we have access to. We can remedy this problem by realizing that the larger group of integers from our sort on the $i$-th
+          bit contains $2^{n-1}$ numbers. So the binary representations present in this group include all possible combinations of values for the
+          other $n-1$ bits. Therefore, this group will contain no information about the missing number, so we no longer need to search it. This will
+          allow the recurrence to have a form that gives linear time by using the Little Master Theorem.
+
+          \pagebreak
+
+        \item
+          For this algorithm, we will keep the bits of the missing number stored in an array $M$. This array will be passed as an argument to avoid
+          the use of global variables. We will also keep temporary arrays, $S_0$ and $S_1$ to sort our integers
+          based on the bit value at a specified position.
+
+          \texttt{---------------------------------------------------------- \linebreak}
+          \begin{algorithm}
+            \caption{Find-Missing-Bit(S, M, j)}
+          \begin{algorithmic}[1]
+            \FOR{ $i \gets 1 ..  n$ }
+            \IF{ ( $S[i].GetBit(j) = = 0$ ) }
+            \STATE $S_0[ length[S_0+1] ] \gets S[i]$
+            \STATE $count_0 \gets count_0 + 1$
+            \ELSE
+            \STATE $S_1[ length[S_1+1] ] \gets S[i]$
+            \STATE $count_1 \gets count_1 + 1$
+            \ENDIF
+            \ENDFOR
+
+            \IF{ $count_0 < count_1$}
+            \STATE $M[j] \gets 0$
+            \IF{$j < n$}
+            \STATE Find-Missing-Bit$(S_0, M, j+1)$
+            \ENDIF
+            \ELSE
+            \STATE $M[j] \gets 1$
+            \IF{$j < n$}
+            \STATE Find-Missing-Bit$(S_1, M, j+1)$
+            \ENDIF
+            \ENDIF
+          \end{algorithmic}
+        \end{algorithm}
+
+
+        \item
+          Dividing this problem requires iterating over the linked list once, which is $O(n)$ time. Let $T(n)$ denote the running time to find the
+          missing number. We get the recursion
+          \[ T(n) =
+            \begin{cases}
+              O(1) &\text{if } n = 1 \\
+              T \left( \frac{n}{2} \right) + dn &\text{else}
+            \end{cases}
+          \]
+
+          By the Little Master Theorem, the running time is then $T(n) = \Theta(n)$, as desired.
+      \end{enumerate}
+
+    \end{solution}
+
   \item Let $S$ be a set of $n \geq 2$ distinct real numbers. Let $\max(S)$ and $\min(S)$ be the largest and smallest numbers in $S$, respectively.
     Define $avg\_gap(S)$ to be $\frac{1}{n-1} (\max(S) - \min(S))$; this is the average distance on the real line between consecutive elements of $S$
     when $S$ is in sorted order. Give a divide-and-conquer algorithm to compute distinct elements $x$ and $y$ in $S$ such that $|x-y| \leq
@@ -370,6 +438,122 @@
 
     Your answer should include $(a)$ a brief description of the main ideas from which the correctness of your algorithm should be evident, $(b)$
     pseudocode, and $(c)$ an analysis of the running time.
+
+    \begin{solution}
+
+      \begin{enumerate}
+        \item
+          We begin by finding the largest and smallest values within $S$ and use them to calculate $avg\_gap(S)$. Next we find the median of $S$ and
+          sort $S$ into sets $S_0$ and $S_1$ such that values in $S_0$ are less than or equal to the median, and values in $S_1$ are greater than or
+          equal to the median.
+
+          Now we use the largest and smallest values within $S_0$ and $S_1$ to calculate $avg\_gap(S_0)$ and $avg\_gap(S_1)$. There is a single gap
+          spanned by a number in $S_0$ and a number in $S_1$ with all other gaps either completely contained within $S_0$ or $S_1$. Let $gap(S_0,
+          S_1)$ be the size of the gap between $S_0$ and $S_1$ (which is given by the difference between the smallest number in $S_1$ and the largest
+          number in $S_0$). Then one of the following must be true:
+          \begin{enumerate}
+            \item $gap(S_0, S_1) \leq avg\_gap(S)$
+            \item $avg\_gap(S_0) \leq avg\_gap(S)$, or
+            \item $avg\_gap(S_1) \leq avg\_gap(S)$
+          \end{enumerate}
+          A proof of this statement has been provided following analysis of the running time for others as skeptical of this claim as I was.
+
+          If $gap(S_0, S_1) \leq avg_gap(S)$, return the pair consisting of the elements that span the gap from $S_0$ to $S_1$. Otherwise, if
+          $avg\_gap(S_0) \leq avg\_gap(S)$, recursively pass $S_0$ to our function that determines a pair of points such that $|x-y| < avg\_gap(S)$.
+          Otherwise, pass $S_1$ to the function.
+
+        \item We let $Select(A,k)$ be the selection algorithm from class that selects the $k$-th largest element from $A$ in linear time.
+
+          \begin{algorithm}[H]
+            \caption{Close-Points$(S)$}
+            \begin{algorithmic}
+
+            \STATE $x_l \gets Select(S,1)$
+            \STATE $x_u \gets Select(S, length[S])$
+            \STATE $avg\_gap \gets (x_u - x_l)/(length[S]-1)$
+
+            \STATE $x_m \gets Select(S, length[S]/2)$
+
+            \FOR{ $i \gets 1,..,n$ }
+            \IF{ $S[i] < x_m$ }
+            \STATE $S_0[ length[S_0]+1 ] \gets S[i]$
+            \ELSE
+            \STATE $S_1[ length[S_1]+1 ] \gets S[i]$
+            \ENDIF
+            \ENDFOR
+
+            \STATE $y_u = Select(S_0, length[S_0])$
+            \STATE $y_l = Select(S_1, 1)$
+            \STATE $avg\_gap_0 \gets (y_u - x_l)/(length[S_0]-1)$
+
+            \IF{ $y_l - y_u \leq avg\_gap$ }
+            \RETURN $y_l, y_u$
+            \ELSIF{ $avg\_gap_0 \leq avg\_gap$ }
+            \RETURN Close-Points$(S_0)$
+            \ELSE
+            \RETURN Close-Points$(S_1)$
+            \ENDIF
+
+            \end{algorithmic}
+
+          \end{algorithm}
+
+        \item
+          Let $T(n)$ be the running time to find two numbers x,y from an array $S$ of size $n$ such that $|x-y| \leq avg\_gap(S)$. At each point in
+          the recursion, we are running Close-Points exactly one time on a set with one half of the size of the step before. This will contribute a
+          $T\left( \frac{n}{2} \right)$ to our recurrence. For the dividing step, we are using our $Select$ algorithm that runs in $O(n)$ time, and
+          iterating through the array a single time for sorting, which gives another $O(n)$ term. The recombination step is also $O(n)$ as it only
+          involves using the $Select$ algorithm and performing comparisons. Therefore, we get the recurrence
+          \[ T(n) =
+            \begin{cases}
+              O(1) &\text{if } n = 2 \\
+              T \left( \frac{n}{2} \right) + O(n) &\text{else}
+            \end{cases}
+          \]
+
+          Using the Little Master Theorem, we see this gives $T(n) = \Theta(n)$, as desired.
+      \end{enumerate}
+
+      \begin{claim}
+
+        With the definitions above, we have at least one of the following
+        \begin{enumerate}
+          \item $gap(S_0, S_1) \leq avg\_gap(S)$
+          \item $avg\_gap(S_0) \leq avg\_gap(S)$
+          \item $avg\_gap(S_1) \leq avg\_gap(S)$
+        \end{enumerate}
+
+      \end{claim}
+
+      \begin{proof}
+
+        We will provide a proof for $n$ even. The case of $n$ odd is similar.
+        By definition, we have
+        \[ avg\_gap(S) = \frac{x_u - x_l}{n - 1}. \]
+        Assume toward a contradiction that all three statements are false. Let $x_{lm}$ denote the lower median of $S$ and $x_{um}$ denote the upper
+        median of $S$. We can calculate
+        \[ avg\_gap(S_0) = \frac{x_{lm} - x_l}{\frac{n}{2}-1}, \]
+        \[ avg\_gap(S_1) = \frac{x_u - x_{um}}{\frac{n}{2}-1}, \]
+        and
+        \[ gap(S_0, S_1) = x_{um} - x_{lm} .\]
+        From the assumptions we made about the claim not being true, these calculations tell us
+        \[ x_{lm} - x_l < \left( \frac{n}{2} - 1 \right) avg\_gap(S), \]
+        \[ x_u - x_{um} < \left( \frac{n}{2} - 1 \right) avg\_gap(S), \]
+        and
+        \[ x_{um} - x_{lm} < avg\_gap(S) .\]
+        From these, we see
+        \begin{align*}
+          x_u - x_l &= (x_u - x_{um}) + (x_{um} - x_{lm}) + (x_{lm} - x_l \\
+          &> \left[ 2 \left( \frac{n}{2} - 1 \right) + 1 \right] avg\_gap(S) \quad \text{by assumption} \\
+          &= x_u - x_l
+        \end{align*}
+
+        We have reached a contradiction, so one of the statements in the claim must be true.
+
+      \end{proof}
+
+    \end{solution}
+
 \end{enumerate}
 
 \end{document}
