@@ -1,0 +1,116 @@
+%        File: hw2.tex
+%     Created: Mon Sep 26 04:00 PM 2016 C
+% Last Change: Mon Sep 26 04:00 PM 2016 C
+%
+
+\documentclass[a4paper]{article}
+
+\title{CSci 5421 Homework 2}
+\date{10/5/16}
+\author{Trevor Steil}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{esint}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem*{claim}{Claim}
+\newtheorem*{problem}{Problem}
+%\newtheorem*{lemma}{Lemma}
+\newtheorem{definition}{Definition}[section]
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\supp}[1]{\mathop{\mathrm{supp}}\left(#1\right)}
+\newcommand{\lip}[1]{\mathop{\mathrm{Lip}}\left(#1\right)}
+\newcommand{\curl}{\mathrm{curl}}
+\newcommand{\la}{\left \langle}
+\newcommand{\ra}{\right \rangle}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+
+\newenvironment{solution}{\emph{Solution.}}
+
+\begin{document}
+\maketitle
+
+\begin{enumerate}
+  \item
+    \begin{problem}
+      Use the \textit{bottom-up} (i.e., iterative) algorithm \texttt{MATRIX-CHAIN-ORDER(p)} seen in class to determine the minimum number of
+      multiplications needed to compute the product of a sequence of six matrices whose dimensions are $p = \la p_0, p_1, \dots, p_6 \ra = \la 30, 1,
+      40, 10, 25, 50, 5 \ra$. You must show your work, i.e., the filled-in lookup table, the optimal parenthesization, and its cost.
+    \end{problem}
+
+  \item
+    \begin{problem} Ex 15.2-5
+    \end{problem}
+
+  \item
+    \begin{problem}
+      Give a top-down, memoized version of the algorithm \texttt{LCS-LENGTH(X,Y)} to compute, in $O(mn)$ time, the length of a longest common
+      subsequence of strings $X$ and $Y$, where $m=|X|$ and $n=|Y|$. (You do not have to retrieve the \texttt{LCS} itself; just compute its length.)
+      Give a careful analysis of the running time.
+    \end{problem}
+
+  \item
+    \begin{problem}
+      This problem explores an improvement in the $\Theta(n^3)$ running time of the algorithm \texttt{OPTIMAL-BST} (Sec 15.5). It can be shown that
+      the optimal root, $root_{ij}$, satisfies $root_{i,j-1} \leq root_{ij} \leq root_{i+1,j}$, $1 \leq i < j \leq n$. (You may assume this result
+      without proof). Using this result, rewrite the algorithm \texttt{OPTIMAL-BST} and prove carefully that it runs in time $\Theta(n^2)$.
+    \end{problem}
+
+  \item
+    \begin{problem}
+      Ex. 25.2-4 Justify your answers carefully
+    \end{problem}
+
+  \item
+    \begin{problem}
+
+      Consider the problem of transforming a string, $A = a_1 a_2 \dots a_m$, of characters into another string, $B=b_1 b_2 \dots b_n$, by a sequence
+      of insert(I), delete(D), and substitute(S) operations.
+
+      Our goal is to come up with a transformation that minimizes the total number of I,D, and S operations. Define the edit distance between two
+      strings as the minimum number of I,D, and S operations needed to transform the first string into the second. Design a bottom-up dynamic
+      programming algorithm to compute the edit distance between $A$ and $B$ in time $\Theta(mn)$. The output is the edit distance and the
+      corresponding operations.
+
+      Your answer should include (i) a brief description of the main ideas, including the recurrence equation and its justifications, (ii) pseudocode,
+      and (iii) an analysis of the running time.
+
+      Hint: Let $e(i,j)$ be the edit distance between $a_1, \dots, a_i$ and $b_1, \dots, b_j$.
+
+    \end{problem}
+
+  \item
+    \begin{problem}
+      Consider the following multiplication table defined on an alphabet $\Sigma = \{a, b\}$.
+
+      \large{\textbf{INSERT TABLE}}
+
+      The rows correspond to the left operand and the columns to the right operand; thus, $aa = b, ab = a,$ etc.
+
+      Design a bottom-up dynamic programming algorithm which takes a string $X = x_1 x_2 \dots x_n$, where each $x_i \in \Sigma$, and outputs ``true''
+      if there is a parenthesization of $X$ for which the expression evaluates to $a$ (under the above multiplication table) and ``false'' otherwise.
+      (You do not have to compute the parenthesization itself if the output is ``true''). The target time bound is $\Theta(n^3)$.
+
+      Your answer should include (i) a brief description of the main ideas, including the recurrence equation and its justification, (ii) pseudocode,
+      and (iii) an analysis of the running time.
+
+      Note: This is a decision problem, not an optimization problem. Such problems can also be solved sometimes via dynamic programming.
+
+      Hint: Let $a_{ij}$ (resp. $b_{ij}$) be ``true'' if there is a parenthesization of $x_1 x_2 \dots x_j$ which evaluates to $a$ (res. $b$) and
+      ``false'' otherwise.
+
+    \end{problem}
+
+\end{enumerate}<++>
+\end{document}
+
+
