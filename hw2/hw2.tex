@@ -47,6 +47,144 @@
       40, 10, 25, 50, 5 \ra$. You must show your work, i.e., the filled-in lookup table, the optimal parenthesization, and its cost.
     \end{problem}
 
+    We will fill in the lookup table according to values of $\delta = j-i$. For $\delta=0$ we have $m_{ij} = 0$.
+    \begin{equation*}
+    %\begin{flalign*}
+      \begin{aligned}[c]
+      &\delta = 1 \\
+      &\quad i=1, j=2 \\
+      &\quad \quad k=1 \\
+      &\quad \quad \quad 30*1*40 = 1200 \\
+      &\quad m_{12} = 1200\\
+      &\quad i=2, j=3 \\
+      &\quad \quad k=2 \\
+      &\quad \quad \quad 1 * 40 * 10 = 400 \\
+      &\quad m_{23} = 400 \\
+      &\quad i=3, j=4 \\
+      &\quad \quad k=3 \\
+      &\quad \quad \quad 40 * 10 * 25 = 10000 \\
+      &\quad m_{34} = 10000 \\
+      &\quad i=4, j=5 \\
+      &\quad \quad k=4 \\
+      &\quad \quad \quad 10 * 25 * 50 = 12500 \\
+      &\quad m_{45} = 12500 \\
+      &\quad i=5, j=6 \\
+      &\quad \quad k=5 \\
+      &\quad \quad \quad 25*50*5=6250 \\
+      &\quad m_{56} = 6250
+    %\end{flalign*}
+    \end{aligned}
+    \quad \quad
+    \begin{aligned}[c]
+      &\delta=2 \\
+      &\quad i=1, j=3 \\
+      &\quad \quad k=1 \\
+      &\quad \quad \quad 400 + 30*1*10 = 700 \\
+      &\quad \quad k=2 \\
+      &\quad \quad \quad 1200 + 30*40*10 = 13200 \\
+      &\quad m_{13} = 700 \\
+      &\quad i=2, j=4 \\
+      &\quad \quad k=2 \\
+      &\quad \quad \quad 10000+1*40*25=11000 \\
+      &\quad \quad k=3 \\
+      &\quad \quad \quad 400+1*10*25=650 \\
+      &\quad m_{24}=650 \\
+      &\quad i=3, j=5 \\
+      &\quad \quad k=3 \\
+      &\quad \quad \quad 12500+40*10*50=32500 \\
+      &\quad \quad k=4 \\
+      &\quad \quad \quad 10000+40*25*50=60000 \\
+      &\quad m_{35} = 32500 \\
+      &\quad i=4, j=6 \\
+      &\quad \quad k=4 \\
+      &\quad \quad \quad 6250+10*25*5=7500 \\
+      &\quad \quad k=5 \text{ gives a bigger result} \\
+      &\quad m_{46}=7500
+    \end{aligned}
+  \end{equation*}
+
+  \begin{equation*}
+    \begin{aligned}[c]
+      &\delta=3 \\
+      &\quad i=1, j=4 \\
+      &\quad \quad k=1 \\
+      &\quad \quad \quad 650 + 30*1*25=1400 \\
+      &\quad \quad k=2 \text{ gives a bigger result} \\
+      &\quad \quad k=3 \\
+      &\quad \quad \quad 700+30*10*25=8200 \\
+      &\quad m_{14} = 1400 \\
+      &\quad i=2, j=5 \\
+      &\quad \quad k=2 \\
+      &\quad \quad \quad 32500+1*40*50=34500 \\
+      &\quad \quad k=3 \\
+      &\quad \quad \quad 400+12500+1*10*50=13400 \\
+      &\quad \quad k=4 \\
+      &\quad \quad \quad 650+1*25*50=1900 \\
+      &\quad m_{25}=1900
+      &\quad i=3, j=6 \\
+      &\quad \quad k=3 \\
+      &\quad \quad \quad 7500+40*10*5=9500 \\
+      &\quad \quad k=4 \\
+      &\quad \quad \quad 10000+6250+40*25*5=17500 \\
+      &\quad \quad k=5 \text{ gives a bigger result} \\
+      &\quad m_{36}=9500
+    \end{aligned}
+    \quad \quad
+    \begin{aligned}[c]
+      &\delta=4 \\
+      &\quad i=1, j=5 \\
+      &\quad \quad k=1 \\
+      &\quad \quad \quad 1900+1*40*50=3900 \\
+      &\quad \quad k=2 \text{ gives a bigger result} \\
+      &\quad \quad k=3 \text{ gives a bigger result} \\
+      &\quad \quad k=4 \\
+      &\quad \quad \quad 1400+30*25*50=38900 \\
+      &\quad m_{15} = 3900 \\
+      &\quad i=2, j=6 \\
+      &\quad \quad k=2 \\
+      &\quad \quad \quad 9500+1*40*5=9700 \\
+      &\quad \quad k=3 \\
+      &\quad \quad \quad 400+7500+1*10*5=7950 \\
+      &\quad \quad k=4 \\
+      &\quad \quad \quad 650+6250+1*25*5=7025 \\
+      &\quad \quad k=5 \\
+      &\quad \quad \quad 1900+1*50*5=2150 \\
+      &\quad m_{26}=2150
+    \end{aligned}
+  \end{equation*}
+
+  \begin{equation*}
+    \begin{aligned}[c]
+      &\delta=5 \\
+      &\quad i=1, j=6 \\
+      &\quad \quad k=1 \\
+      &\quad \quad \quad 2150 + 30*1*5=2300 \\
+      &\quad \quad k=2 \text{ gives a bigger result} \\
+      &\quad \quad k=3 \text{ gives a bigger result} \\
+      &\quad \quad k=4 \text{ gives a bigger result} \\
+      &\quad \quad k=5 \text{ gives a bigger result} \\
+      &\quad m_{16} = 2300
+    \end{aligned}
+    \hspace{6.7cm}
+  \end{equation*}
+
+  This gives the following lookup table.
+
+    \[
+    \begin{bmatrix}
+
+      0 & 1200 & 700 & 1400 & 3900 & 2300 \\
+      * & 0 & 400 & 650 & 1900 & 2150 \\
+      * & * & 0 & 10000 & 32500 & 9500 \\
+      * & * & * & 0 & 12500 & 7500 \\
+      * & * & * & * & 0 & 6250 \\
+      * & * & * & * & * & 0
+
+    \end{bmatrix}
+    \]
+
+    Therefore, the optimal parenthesization requires 2300 scalar multiplications and is given as $A_1 * ((( (A_2 * A_3) * A_4) * A_5) * A_6)$.
+
   \item
     \begin{problem} Ex 15.2-5
     \end{problem}
