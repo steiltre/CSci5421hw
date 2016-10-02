@@ -335,11 +335,128 @@
 
     \end{problem}
 
+    \begin{solution}
+
+      The main idea for this problem is understanding how optimal substructures can be used. Define $A_i = a_1 a_2 \dots a_i$ and $B_j = b_1 b_2 \dots
+      b_j$. We will be constructing a lookup table with entries
+      $e[i,j]$ for $i=1, \dots, m$ and $j = 1, \dots, n$, where $e[i,j]$ is the edit distance between $A_i$ and $B_j$.
+
+      If $a_i = b_j$, we see that no extra edits from changing $A_{i-1}$ to $B_{j-1}$ are necessary to change $A_i$ to $B_j$. Therefore, $e[i,j] \leq
+      e[i-1,j-1]$ in this case. If $e[i,j]<e[i-1,j-1]$ we would have a shorter sequence of edits from $A_{i-1}$ to $B_{j-1}$ by ignoring the match of
+      the last entries of each string, contradicting the definition of $e[i-1,j-1]$. Therefore, if $a_i = b_j$, then $e[i,j] = e[i-1,j-1]$.
+
+      If $a_i \neq b_j$, we can still construct the corresponding set of edits from the edit sequences of converting substrings. The sequence
+      corresponding to $e[i-1,j-1]$ can have a single substitution added to get an edit sequence to change $A_i$ to $B_j$. An edit sequence
+      corresponding to $e[i-1,j]$ can have a single insertion added to get a sequence to change $A_{i}$ to $B_j$. An edit sequence corresponding to
+      $e[i,j-1]$ can have a single deletion added to get a sequence to change $A_i$ to $B_j$. We can also see that taking an edit sequence to change
+      $A_i$ to $B_j$ and removing the substitution, insertion, or deletion that modifies the furthest character to the right, we get an edit sequence
+      corresponding to changing $A_{i-1}$ to $B_{j-1}$, $A_{i-1}$ to $B_j$, or $A_i$ to $B_{j-1}$.
+
+      This also lets us see how the entries $e[i,j]$ can be computed. We get the relation
+      \[ e[i,j] =
+      \begin{cases}
+        e[i-1,j-1] &\text{if } a_i = b_j \\
+        \min \{ e[i-1,j-1], e[i-1,j], e[i,j-1] \} + 1 &\text{else}
+      \end{cases}
+      \]
+
+      By considering $A$ or $B$ being the empty string, we see that the first row and column can be initialized to
+      \[ e[0,j] = j \]
+      and
+      \[ e[i,0] = i \]
+      because starting or ending at the empty string requires all characters to either be inserted or deleted.
+
+      Putting this into an algorithm gives
+      \vspace{.5cm}
+      \begin{algorithm}
+        \begin{algorithmic}[1]
+          \Function{Edit-Distance}{$A,B$}
+
+          \State $m \gets length(A)$
+          \State $n \gets length(B)$
+
+          \For{ $i \gets 0 .. m$ }
+          \State $e[i,0] = i$
+          \EndFor
+
+          \For{ $j \gets 0 .. n$ }
+          \State $e[0,j] = j$
+          \EndFor
+
+          \For{ $i \gets 1..m$ }
+          \For{ $j \gets 1..n$ }
+          \If{ $a_i = b_j$ }
+          \State $e[i,j] \gets e[i-1,j-1]$
+          \State $p[i,j] \gets ``\nwarrow"$
+          \Else
+          \If{ $e[i-1,j-1] \leq e[i, j-1] \And e[i-1,j-1] \leq e[i-1,j]$ }
+          \State $e[i,j] \gets e[i-1,j-1] + 1$
+          \State $p[i,j] \gets ``\nwarrow"$
+          \ElsIf{ $e[i,j-1] \leq e[i-1,j]$ }
+          \State $e[i,j] \gets e[i,j-1]+1$
+          \State $p[i,j] \gets ``\leftarrow"$
+          \Else
+          \State $e[i,j] \gets e[i-1,j]+1$
+          \State $p[i,j] \gets ``\uparrow"$
+          \EndIf
+          \EndIf
+          \EndFor
+          \EndFor
+
+          \hspace{-.25cm} \Return $e \And p$
+
+          \EndFunction
+        \end{algorithmic}
+      \end{algorithm}
+
+      This generates a matrix where the edit distance between $A$ and $B$ is contained in $e[m,n]$. To obtain the sequence of edits necessary to
+      change $A$ to $B$, we must use the extra information stored in $p$. We do this by starting at the lower-right corner and traversing the arrows.
+      Deletions correspond to $``\uparrow"$. Insertions correspond to $``\leftarrow"$. Substitutions and matchings correspond to $``\nwarrow"$. We
+      are able to distinguish between substitutions and matchings because $e[i,j] = e[i-1,j-1]$ for a matching, but $e[i,j] = e[i-1,j-1] + 1$ for a
+      substitution. We print this edit sequence through recursive calls to a print function.
+
+      \begin{algorithm}
+        \begin{algorithmic}[1]
+          \Function{Print-Edit-Sequence}{$A,B,i,j$}
+
+          \If{ $p[i,j] = ``\nwarrow"$ }
+          \If{ $e[i,j] = e[i-1,j-1]$ }
+          \State \texttt{Print-Edit-Sequence}$(A,B,i-1,j-1)$
+          \State \texttt{print} ``M''
+          \Else
+          \State \texttt{Print-Edit-Sequence}$(A,B,i-1,j-1)$
+          \State \texttt{print} ``S''
+          \EndIf
+          \ElsIf{ $p[i,j] = ``\leftarrow"$ }
+          \State \texttt{Print-Edit-Sequence}$(A,B,i,j-1)$
+          \State \texttt{print} ``I''
+          \Else
+          \State \texttt{Print-Edit-Sequence}$(A,B,i-1,j)$
+          \State \texttt{print} ``D''
+          \EndIf
+
+          \EndFunction
+        \end{algorithmic}
+      \end{algorithm}
+
+      In \texttt{Edit-Distance}, we have nested loops containing operations that require $O(1)$ time, so this contributes $O(mn)$ to the run time. In
+      \texttt{Print-Edit-Sequence}, there are recursive calls that decrease $i$ or $j$ in every call, and only operations that are $O(1)$ are
+      performed. So \texttt{Print-Edit-Sequence} has a running time of $O(m+n)$. This gives an overall running time of $O(mn)$.
+
+    \end{solution}
+
   \item
     \begin{problem}
       Consider the following multiplication table defined on an alphabet $\Sigma = \{a, b\}$.
 
-      \large{\textbf{INSERT TABLE}}
+      \[
+        \begin{matrix}
+          \ & | & a & b \\
+          -- & | & -- & -- \\
+          a & | & b & a \\
+          b & | & b & b
+        \end{matrix}
+      \]
 
       The rows correspond to the left operand and the columns to the right operand; thus, $aa = b, ab = a,$ etc.
 
@@ -356,6 +473,90 @@
       ``false'' otherwise.
 
     \end{problem}
+
+    \begin{solution}
+
+      We see from the multiplication table that the only way for a nontrivial product to have some parenthesization that results in $a$ is for there
+      to be some point the product can be split where left of the split can be parenthesized to give $a$ and right of the split can be parenthesized
+      to give $b$. We must therefore keep track of whether parenthesizations exist that result in $a$ as well as whether parenthesizations exist that
+      result in $b$.
+
+      Let $X=x_1 x_2 \dots x_n$ be our string. Define $A = (a_{ij})$ where $a_{ij} =$ ``true'' if there exists a parenthesization of $x_i \dots x_j$ that results in
+      $a$, and $a_{ij}=$ ``false'' otherwise. Similarly, define $B = (b_{ij})$ where $b_{ij} =$ ``true'' if there exists a parenthesization of $x_i \dots x_j$ that results in $b$, and
+      $b_{ij}=$ ``false'' otherwise.
+
+      From the multiplication table, we have $a_{ij} =$ ``true'' if there is some $i \leq k < j$ such that $a_{ik}=$ ``true'' and $b_{(k+1)j}=$
+      ``true''. Similarly, $b_{ij} =$ ``true'' if there is some $i \leq k < j$ such that $b_{ik}=$ ``true'' or if there is some $i \leq k < j$ such
+      that $a_{ik}=$ ``true'' and $a_{(k+1)j} =$ ``true''.
+
+      The lookup tables are structured and filled very similarly to those for Matrix Chain Multiplication. We only use the upper triangular portion of
+      our matrices. In the end, we want the value $a_{1n}$. We fill the matrix along its diagonals. The main diagonal can be filled by
+      \[ a[i,i] =
+      \begin{cases}
+        \text{``true"} &\text{if } x_i = a \\
+        \text{``false"} &\text{else}
+      \end{cases}
+      \]
+      and similarly for $b[i,i]$.
+
+      This gives us the following algorithm:
+
+      \begin{algorithm}
+        \begin{algorithmic}[1]
+          \Function{Multiplication-Table}{$X$}
+
+          \State $n \gets length(X)$
+          \For{ $i \gets 1..n$ }
+          \For{ $j \gets i..n$ }
+          \State $a[i,j] \gets \text{``false"}$
+          \State $b[i,j] \gets \text{``false"}$
+          \EndFor
+          \EndFor
+
+          \For{ $i \gets 1..n$ }
+          \If{ $x_i = a$ }
+          \State $a[i,i] \gets \text{``true"}$
+          \Else
+          \State $b[i,i] \gets \text{``true"}$
+          \EndIf
+          \EndFor
+
+          \For{ $\delta \gets 1..n-1$ }
+          \For{ $i \gets 1..n-\delta$ }
+          \State $j \gets i + \delta$
+          \For{ $k \gets i..j-1$ }
+          \If{ $a[i,k] = \text{``true''}$ }
+          \If{ $b[k+1,j] = \text{``true''}$ }
+          \State $a[i,j] \gets \text{``true''}$
+          \ElsIf{ $a[k+1,j] = \text{``true''}$ }
+          \State $b[i,j] \gets \text{``true''}$
+          \EndIf
+          \Else
+          \State $b[i,j] \gets \text{``true''}$
+          \EndIf
+          \EndFor
+          \EndFor
+          \EndFor
+
+          \hspace{-.25cm} \Return $a[1,n]$
+
+          \EndFunction
+        \end{algorithmic}
+      \end{algorithm}
+
+      All of the operations performed here are comparisons and assignments that take $O(1)$ time each. Each of the 3 loops is running over at most $n$
+      values, so the overall running time of this algorithm is $O(n^3)$. A slightly more careful analysis would see our innermost loop is running over
+      $\delta$ items, giving a running time of $O(\delta)$. The next loop out from there is running over $n-\delta$ values, giving a cumulative
+      running time of $O(\delta(n-\delta))$ when combined with the inner loop. The outermost loop is then looping over all values of $\delta$ from 1
+      to $n$. So the overall running time is
+      \begin{align*}
+        O \left( \sum_{\delta=1}^n \delta(n-\delta) \right) &= O \left( \sum_{\delta=1}^n \delta^2 \right) \\
+        &= O \left( \frac{n(n+1)(2n+1)}{6} \right) \\
+        &= O(n^3)
+      \end{align*}
+      exactly as our initial analysis showed.
+
+    \end{solution}
 
 \end{enumerate}
 \end{document}
