@@ -13,6 +13,9 @@
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{esint}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{corollary}{Corollary}[section]
@@ -34,7 +37,10 @@
 \newcommand{\ra}{\right \rangle}
 \renewcommand{\vec}[1]{\mathbf{#1}}
 
-\newenvironment{solution}{\emph{Solution.}}
+\newenvironment{solution}[1][]{\emph{Solution #1}}
+
+\algnewcommand{\Or}{\textbf{ or }}
+\algnewcommand{\And}{\textbf{ and }}
 
 \begin{document}
 \maketitle
@@ -47,9 +53,11 @@
       40, 10, 25, 50, 5 \ra$. You must show your work, i.e., the filled-in lookup table, the optimal parenthesization, and its cost.
     \end{problem}
 
-    We will fill in the lookup table according to values of $\delta = j-i$. For $\delta=0$ we have $m_{ij} = 0$.
+    \begin{solution}
+
+    We will fill in the lookup table according to values of $\delta = j-i$. For $\delta=0$ we have $m_{ij} = 0$ for all $i=j$.
+    \vspace{-.2cm}
     \begin{equation*}
-    %\begin{flalign*}
       \begin{aligned}[c]
       &\delta = 1 \\
       &\quad i=1, j=2 \\
@@ -72,7 +80,6 @@
       &\quad \quad k=5 \\
       &\quad \quad \quad 25*50*5=6250 \\
       &\quad m_{56} = 6250
-    %\end{flalign*}
     \end{aligned}
     \quad \quad
     \begin{aligned}[c]
@@ -185,9 +192,53 @@
 
     Therefore, the optimal parenthesization requires 2300 scalar multiplications and is given as $A_1 * ((( (A_2 * A_3) * A_4) * A_5) * A_6)$.
 
+  \end{solution}
+
   \item
     \begin{problem} Ex 15.2-5
+      Let $R(i,j)$ be the number of times that table entry $m[i,j]$ is referenced while computing other table entries in a call of
+      \texttt{Matrix-Chain-Order}. Show that the total number of references for the entire table is
+      \[ \sum_{i=1}^n \sum_{j=1}^n R(i,j) = \frac{n^3 - n}{3} .\]
     \end{problem}
+
+    \begin{solution}[1]
+
+      By looking at the algorithm, we can see for $j \geq i$ that $m[i,j]$ is used to calculate all values in the table to the right of position
+      $(i,j)$ or above position $(i,j)$ in the lookup table. Therefore, we have
+      \[ R(i,j) =
+        \begin{cases}
+          0 &\text{if } i > j \\
+          (i-1) + (n-j) &\text{else}
+        \end{cases}
+      \]
+      because there are $i-1$ entries above position $(i,j)$ and $n-j$ entries to the right of position $(i,j)$ in the lookup table.
+
+      Now we can compute
+      \begin{align*}
+        \sum_{i=1}^n \sum_{j=1}^n R(i,j) &= \sum_{i=1}^n \sum_{j=i}^n n+i-j-1 \\
+        &= \sum_{i=1}^n (n-i+1)(n+i-1) - \frac{n(n+1)}{2} + \frac{i(i-1)}{2} \\
+        &= \sum_{i=1}^n n^2 - i^2 +2i - 1 -\frac{1}{2} n^2 - \frac{1}{2} n + \frac{1}{2} i^2 -\frac{1}{2} i \\
+        &= \frac{1}{2} n^3 - \frac{1}{2}n^2 - n - \frac{n(n+1)(2n+1)}{12} + \frac{3n(n+1)}{4} \\
+        &= \frac{1}{2} n^3 - \frac{1}{2} n^2 - n - \frac{n^3}{6} - \frac{n^2}{4} - \frac{n}{12} + \frac{3n^2}{4} + \frac{3n}{4} \\
+        &= \frac{n^3}{3} - \frac{n}{3}
+      \end{align*}
+
+    \end{solution}
+
+    \begin{solution}[2]
+
+      An alternative (and simpler) solution is to realize that we don't have to explicitly calculate $R(i,j)$ and can instead use the structure of the
+      loops in the algorithm. We see that we loop over the diagonals of our lookup table placing entries as we go. We have $\delta = j-i$ taking
+      values from 1 to $n-1$. Then $i$ takes values from 1 to $n-\delta$. We assign $j = i + \delta$, and then we compute the number of
+      multiplications we could get from each of the $\delta$ possible ways of splitting the product. Each of these possibilities requires looking up 2
+      values from the lookup table. So we have
+      \begin{align*}
+        \sum_{i=1}^n \sum_{j=1}^n R(i,j) &= 2 \sum_{\delta=1}^{n-1} (n-\delta) \delta \\
+        &= n^2 (n-1) - \frac{n(n-1)(2n-1)}{3} \\
+        &= n^3 - n^2 - \frac{2}{3}n^3 + n^2 - \frac{1}{3}n \\
+        &= \frac{n^3 - n}{3}
+      \end{align*}
+    \end{solution}
 
   \item
     \begin{problem}
@@ -195,6 +246,64 @@
       subsequence of strings $X$ and $Y$, where $m=|X|$ and $n=|Y|$. (You do not have to retrieve the \texttt{LCS} itself; just compute its length.)
       Give a careful analysis of the running time.
     \end{problem}
+
+    \begin{solution}
+
+      We will let our strings be given by $X = x_1 x_2 \dots x_m$ and $Y = y_1 y_2 \dots y_n$. We give the algorithm as
+
+      \begin{algorithm}
+        \begin{algorithmic}[1]
+        \Function{Memoized-LCS}{$X,Y$}
+          \For{ $i \gets 1 .. m$ }
+          \For{ $j \gets 1 .. n$ }
+          \State $l[i,j] \gets \infty$
+          \EndFor
+          \EndFor
+
+          \State \texttt{Lookup-LCS}$(X,Y,length(X), length(Y))$
+        \EndFunction
+        \end{algorithmic}
+
+        \vspace{1cm}
+
+        \begin{algorithmic}[1]
+        \Function{Lookup-LCS}{$X,Y,i,j$}
+          \If{ $l[i,j] < \infty$ }
+          \Return $l[i,j]$
+          \Else
+          \If{ $i=0 \Or j=0$ }
+          \State $l[i,j] \gets 0$
+          \ElsIf{ $x_i = x_j $}
+          \State $l[i,j] \gets \texttt{Lookup-LCS}(X,Y,i-1,j-1)$
+          \ElsIf{ $l[i-1,j] \geq l[i,j-1]$ }
+          \State $l[i,j] \gets \texttt{Lookup-LCS}(X,Y,i-1,j)$
+          \Else
+          \State $l[i,j] \gets \texttt{Lookup-LCS}(X,Y,i,j-1)$
+          \EndIf
+          \EndIf
+          \State
+          \Return $l[i,j]$
+        \EndFunction
+        \end{algorithmic}
+      \end{algorithm}
+
+      We can divide calls to \texttt{Lookup-LCS} into Type 1 calls in which $l[i,j]$ must be computed and Type 2 calls in which the value of $l[i,j]$
+      is retrieved from the table.
+
+      For each entry in the table, there can be at most one Type 1 call because after the value of $l[i,j]$ is computed, it is stored in the table for
+      future lookups. To compute $l[i,j]$ previous values of $l[i,j]$ are looked up and compared, both of which take $O(1)$ time. Because there are
+      $mn$ entries in the lookup table, we get a contribution of $O(mn)$ to our running-time from Type 1 calls to \texttt{Lookup-LCS}.
+
+      When trying to find the value of $l[i,j]$, \texttt{Lookup-LCS} is only called to lookup values for $l[i-1,j], l[i,j-1]$, and $l[i-1,j-1]$.
+      Thinking of this instead to tell us where $Lookup-LCS(X,Y,i,j)$ can be called from, we see the only possible locations in the table to make such
+      a call would have to come from positions directly below $l[i,j]$, directly right of $l[i,j]$, or one entry right and one entry down from
+      $l[i,j]$. Because of this, there can be at most 3 Type 2 calls performed on any entry in our lookup table (there can actually only be 2 because
+      the first call would have to be a Type 1 call). Each Type 2 call requires $O(1)$ time, so the Type 2 calls contribute a running time of $O(mn)$
+      to the total running time.
+
+      Combining the running times from Type 1 and Type 2 calls to \texttt{Lookup-LCS}, we see the running time of \texttt{Memoized-LCS} is $O(mn)$.
+
+    \end{solution}
 
   \item
     \begin{problem}
@@ -248,7 +357,7 @@
 
     \end{problem}
 
-\end{enumerate}<++>
+\end{enumerate}
 \end{document}
 
 
