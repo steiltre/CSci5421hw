@@ -397,9 +397,43 @@
     \begin{solution}
 
       In the original algorithm, we define
-      \[ d_{ij}^{(k)} \gets \min \left( d_{ij}^{(k-1)}, d_{ik}^{(k-1)} + d_{jk}^{(k-1)} \right) .\]
+      \[ d_{ij}^{(k)} \gets \min \left( d_{ij}^{(k-1)}, d_{ik}^{(k-1)} + d_{kj}^{(k-1)} \right) .\]
 
-      Choosing $d_{ij}^{(k)} \gets d_{ij}^{(k-1)}$ doesn't cause any issues when dropping the subscripts and storing values in a single array.
+      When $d_{ij}^{(k)} \gets d_{ik}^{(k-1)} + d_{kj}^{(k-1)}$, we are concerned with an update of $d_{ik}^{(k-1)}$ to $d_{ik}^{(k)}$ or
+      $d_{kj}^{(k-1)}$ to $d_{kj}^{(k)}$ could affect the values used in updating $d_{ij}^{(k)}$. For example, we may end up updating
+      \[ d_{ij}^{(k)} \gets d_{ik}^{(k)} + d_{jk}^{(k-1)} .\]
+
+      In terms of the problem at hand, $d_{ik}^{(k)}$ represents the length of the shortest path from $i$ to $k$ with intermediate vertices coming
+      from the set $\{1,\dots,k\}$. This leads us to the following:
+
+      \begin{claim}
+        For any $i,k$, $d_{ik}^{(k)} = d_{ik}^{(k-1)}$.
+      \end{claim}
+
+      \begin{proof}
+
+        Clearly, $d_{ik}^{(k)} \leq d_{ik}^{(k-1)}$ because we have more intermediate vertices to choose from.
+
+        Assume $d_{ik}^{(k)} < d_{ik}^{(k-1)}$. Then there is a path $p_1$ starting at $i$ and ending at $k$ with intermediate in $\{1,\dots,k\}$ that
+        has shorter length than any path with intermediate vertices in $\{1,\dots,k-1\}$.
+
+        If $k$ is not an intermediate vertex in $p_1$, then $p_1$ is
+        a path from $i$ to $k$ with intermediate vertices in $\{1,\dots,k-1\}$, and the length of $p_1$ is not less than $d_{ik}^{(k-1)}$, which is a
+        contradiction.
+
+        If $k$ is an intermediate vertex in $p_1$, let $p_2$ be the path obtained by taking $p_1$ and stopping the first time $k$ is
+        used as an intermediate vertex. Then $p_2$ is a path with intermediate vertices in $\{1,\dots,k-1\}$ and the length of $p_2$ is less than the
+        length of $p_1$, which is again a contradiction.
+
+        Therefore, $d_{ik}^{(k)} = d_{ik}^{(k-1)}$
+
+      \end{proof}
+
+      We can similarly show that $d_{kj}^{(k)} = d_{kj}^{(k-1)}$. Therefore,
+      \[ d_{ik}^{(k-1)} + d_{kj}^{(k-1)} = d_{ik}^{(k)} + d_{kj}^{(k-1)} = d_{ik}^{(k-1)} + d_{kj}^{(k)} = d_{ik}^{(k)} + d_{kj}^{(k)} .\]
+
+      Thus, we don't risk using any incorrect values in the computation of $d_{ij}^{(k)}$ when dropping subscripts in the algorithm and storing values
+      for $d$ in the same array.
 
     \end{solution}
 
