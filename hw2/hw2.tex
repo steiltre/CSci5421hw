@@ -321,7 +321,7 @@
       pseudocode. Our algorithm is then the following:
 
       \begin{algorithm}
-        \begin{algorithmic}
+        \begin{algorithmic}[1]
 
           \Function{Optimal-BST}{$p,q,n$}
 
@@ -339,7 +339,7 @@
           \State $e[i,i] \gets e[i,i-1] + e[i+1,i] + w[i,i]$
           \State $root[i,i] = i$
           \Else
-          \For{ $r \gets root[i,j-1]..root[i+1,j]$ }
+          \For{ $r \gets root[i,j-1] .. root[i+1,j]$ }
           \State $t \gets e[i,r-1] + e[r+1,j] + w[i,j]$
           \If{ $t < e[i,j]$ }
           \State $e[i,j] \gets t$
@@ -354,11 +354,44 @@
         \end{algorithmic}
       \end{algorithm}
 
+      We see from the pseudocode that the innermost loop runs at most $root[i+1,j] - root[i,j-1] + 1$ times. We do not know exactly how many times
+      this is, but we can add up this time for all $i$ with a fixed $l$.
+
+      Let $l \geq 2$. Then $j= i+l-1$. The largest number of times the inner two loops can run is given by
+      \begin{align*}
+        \sum_{i=1}^{n-l+1} r[i+1,i+l-1] - r[i,i_l-2] + 1 &= r[n-l+2,n] - r[1,l-1] + n-l+1 \quad \parbox{3cm}{because the sum is telescoping} \\
+        &\leq 2n - l \\
+        &= O(n)
+      \end{align*}
+      which is less than the $O(n^2)$ we get letting our innermost loop run from $i$ to $j$.
+      The outer loop runs for $l=1 .. n$, giving us another $n$ in our overall running time. Therefore, we have an overall running time of $O(n^2)$.
+
     \end{solution}
 
   \item
     \begin{problem}
       Ex. 25.2-4 Justify your answers carefully
+
+      As it appears in the text, the Floyd-Warshall algorithm requires $\Theta(n^3)$ space, since we compute $d_{ij}^{(k)}$ for $i,j,k =1, 2, \dots,
+      n$. Show that the following procedure, which simply drops all the superscripts, is correct, and thus only $\Theta(n^2)$ space is required
+
+      \begin{algorithmic}[1]
+        \Function{Floyd-Warshall'}{$W$}
+
+        \State $n \gets rows[W]$
+        \State $D \gets W$
+
+        \For{ $k \gets 1.. n$ }
+        \For{ $i \gets 1..n$ }
+        \For{ $j \gets 1..n$ }
+        \State $d_{ij} \gets \min( d_{ij}, d_{ik} + d_{kj})$
+        \EndFor
+        \EndFor
+        \EndFor
+
+        \Return $D$
+        \EndFunction
+      \end{algorithmic}
     \end{problem}
 
   \item
