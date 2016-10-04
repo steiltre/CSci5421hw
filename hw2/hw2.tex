@@ -394,6 +394,15 @@
       \end{algorithmic}
     \end{problem}
 
+    \begin{solution}
+
+      In the original algorithm, we define
+      \[ d_{ij}^{(k)} \gets \min \left( d_{ij}^{(k-1)}, d_{ik}^{(k-1)} + d_{jk}^{(k-1)} \right) .\]
+
+      Choosing $d_{ij}^{(k)} \gets d_{ij}^{(k-1)}$ doesn't cause any issues when dropping the subscripts and storing values in a single array.
+
+    \end{solution}
+
   \item
     \begin{problem}
 
