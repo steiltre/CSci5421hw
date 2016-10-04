@@ -312,6 +312,50 @@
       without proof). Using this result, rewrite the algorithm \texttt{OPTIMAL-BST} and prove carefully that it runs in time $\Theta(n^2)$.
     \end{problem}
 
+    \begin{solution}
+
+      The algorithm we write will only slightly modify the \texttt{Optimal-BST} algorithm in the book. We can use the information of previous roots by
+      storing another matrix containing the roots used in each step of the calculation. We need to know how to initialize this matrix. We see that for
+      a tree consisting only of the node $k_i$ and its associated dummy nodes, the root node must be $k_i$. So along the diagonal, we will have
+      $r[i,i] = i$. This initialization is different than the initialization from $e$ and $w$, so it will be seen as an \texttt{if} statement in the
+      pseudocode. Our algorithm is then the following:
+
+      \begin{algorithm}
+        \begin{algorithmic}
+
+          \Function{Optimal-BST}{$p,q,n$}
+
+          \For{ $i \gets 1.. n+1$ }
+          \State $e[i,i-a] \gets q_{i-1}$
+          \State $w[i,i-1] \gets q_{i-1}$
+          \EndFor
+
+          \For{ $l \gets 1..n$ }
+          \For{ $i \gets 1 .. n-l+1$}
+          \State $j \gets i+l-1$
+          \State $e[i,j] \gets \infty$
+          \State $w[i,j] \gets w[i,j-1] + p_j + q_j$
+          \If{ $i=j$ }
+          \State $e[i,i] \gets e[i,i-1] + e[i+1,i] + w[i,i]$
+          \State $root[i,i] = i$
+          \Else
+          \For{ $r \gets root[i,j-1]..root[i+1,j]$ }
+          \State $t \gets e[i,r-1] + e[r+1,j] + w[i,j]$
+          \If{ $t < e[i,j]$ }
+          \State $e[i,j] \gets t$
+          \State $root[i,j] \gets r$
+          \EndIf
+          \EndFor
+          \EndIf
+          \EndFor
+          \EndFor
+
+          \EndFunction
+        \end{algorithmic}
+      \end{algorithm}
+
+    \end{solution}
+
   \item
     \begin{problem}
       Ex. 25.2-4 Justify your answers carefully
