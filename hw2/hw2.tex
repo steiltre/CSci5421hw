@@ -47,8 +47,8 @@
 
 \begingroup
   \centering
-  \LARGE CSci 5421 Homework 2 \\ [1.5em]
-  \Large Trevor Steil (5088505) \\ [1.5em]
+  \LARGE CSci 5421 Homework 2 \\ [1.0em]
+  \Large Trevor Steil (5088505) \\ [1.0em]
   \Large 10/5/16 \\
 \endgroup
 
@@ -64,7 +64,8 @@
 
     \begin{solution}
 
-    We will fill in the lookup table according to values of $\delta = j-i$. For $\delta=0$ we have $m_{ij} = 0$ for all $i=j$.
+    We will fill in the lookup table according to values of $\delta = j-i$. For $\delta=0$ we have $m_{ij} = 0$ for all $i=j$. These computations are
+    largely here so I can find mistakes should my answer be incorrect.
     \vspace{-.2cm}
     \begin{equation*}
       \begin{aligned}[c]
@@ -450,7 +451,7 @@
       \[ d_{ik}^{(k-1)} + d_{kj}^{(k-1)} = d_{ik}^{(k)} + d_{kj}^{(k-1)} = d_{ik}^{(k-1)} + d_{kj}^{(k)} = d_{ik}^{(k)} + d_{kj}^{(k)} .\]
 
       Thus, we don't risk using any incorrect values in the computation of $d_{ij}^{(k)}$ when dropping subscripts in the algorithm and storing values
-      for $d$ in the same array.
+      for $d$ in the same array. Because there is only a single array the space requirement is $O(n^2)$.
 
     \end{solution}
 
@@ -474,9 +475,17 @@
 
     \begin{solution}
 
-      The main idea for this problem is understanding how optimal substructures can be used. Define $A_i = a_1 a_2 \dots a_i$ and $B_j = b_1 b_2 \dots
+      The main idea for this problem is understanding how to use optimal edit sequences for smaller substrings to get an optimal edit sequence for the
+      current string. Define $A_i = a_1 a_2 \dots a_i$ and $B_j = b_1 b_2 \dots
       b_j$. We will be constructing a lookup table with entries
       $e[i,j]$ for $i=1, \dots, m$ and $j = 1, \dots, n$, where $e[i,j]$ is the edit distance between $A_i$ and $B_j$.
+
+      Assume we have a sequence of edits necessary to transform $A_i$ into $B_j$. Consider the edit that changes the furthest character to the right
+      in our strings (this character may only be present in $A_i$ or $B_j$ if the final edit is an insertion or deletion). If the final edit is a
+      matching, the sequence without the final match gives an edit sequence to transform $A_{i-1}$ into $B_{j-1}$. If this sequence were not optimal,
+      a cut-and-paste argument says we could find a shorter edit sequence to transform $A_i$ into $B_j$. Similarly, a cut-and-paste argument can be
+      used to show optimal substructures must hold if the final edit is a substitution, insertion, or deletion by considering the edit sequence
+      without the last edit as an edit sequence to transform $A_i$ or $A_{i-1}$ into $B_j$ or $B_{j-1}$. Now we work these ideas into an algorithm.
 
       If $a_i = b_j$, we see that no extra edits from changing $A_{i-1}$ to $B_{j-1}$ are necessary to change $A_i$ to $B_j$. Therefore, $e[i,j] \leq
       e[i-1,j-1]$ in this case. If $e[i,j]<e[i-1,j-1]$ we would have a shorter sequence of edits from $A_{i-1}$ to $B_{j-1}$ by ignoring the match of
@@ -504,7 +513,8 @@
       because starting or ending at the empty string requires all characters to either be inserted or deleted.
 
       Putting this into an algorithm gives
-      \vspace{.5cm}
+      \pagebreak
+      %\vspace{.5cm}
       %\begin{algorithm}
         \begin{algorithmic}[1]
           \Function{Edit-Distance}{$A,B$}
@@ -552,7 +562,9 @@
       are able to distinguish between substitutions and matchings because $e[i,j] = e[i-1,j-1]$ for a matching, but $e[i,j] = e[i-1,j-1] + 1$ for a
       substitution. We print this edit sequence through recursive calls to a print function.
 
-      \begin{algorithm}
+      \pagebreak
+      %\vspace{.5cm}
+      %\begin{algorithm}
         \begin{algorithmic}[1]
           \Function{Print-Edit-Sequence}{$A,B,i,j$}
 
@@ -574,7 +586,8 @@
 
           \EndFunction
         \end{algorithmic}
-      \end{algorithm}
+      %\end{algorithm}
+      \vspace{.5cm}
 
       In \texttt{Edit-Distance}, we have nested loops containing operations that require $O(1)$ time, so this contributes $O(mn)$ to the run time. In
       \texttt{Print-Edit-Sequence}, there are recursive calls that decrease $i$ or $j$ in every call, and only operations that are $O(1)$ are
