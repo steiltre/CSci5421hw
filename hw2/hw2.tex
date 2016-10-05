@@ -43,7 +43,16 @@
 \algnewcommand{\And}{\textbf{ and }}
 
 \begin{document}
-\maketitle
+%\maketitle
+
+\begingroup
+  \centering
+  \LARGE CSci 5421 Homework 2 \\ [1.5em]
+  \Large Trevor Steil (5088505) \\ [1.5em]
+  \Large 10/5/16 \\
+\endgroup
+
+\vspace{2.0em}
 
 \begin{enumerate}
   \item
@@ -190,7 +199,8 @@
     \end{bmatrix}
     \]
 
-    Therefore, the optimal parenthesization requires 2300 scalar multiplications and is given as $A_1 * ((( (A_2 * A_3) * A_4) * A_5) * A_6)$.
+    Therefore, the optimal parenthesization requires 2300 scalar multiplications. We can find the optimal parenthesization by tracing the optimal
+    splitting indices given in the calculations above. The optimal parenthesization is given as $A_1 * ((( (A_2 * A_3) * A_4) * A_5) * A_6)$.
 
   \end{solution}
 
@@ -251,7 +261,8 @@
 
       We will let our strings be given by $X = x_1 x_2 \dots x_m$ and $Y = y_1 y_2 \dots y_n$. We give the algorithm as
 
-      \begin{algorithm}
+      \vspace{.8cm}
+      %\begin{algorithm}
         \begin{algorithmic}[1]
         \Function{Memoized-LCS}{$X,Y$}
           \For{ $i \gets 1 .. m$ }
@@ -264,7 +275,7 @@
         \EndFunction
         \end{algorithmic}
 
-        \vspace{1cm}
+        \vspace{.6cm}
 
         \begin{algorithmic}[1]
         \Function{Lookup-LCS}{$X,Y,i,j$}
@@ -285,7 +296,8 @@
           \Return $l[i,j]$
         \EndFunction
         \end{algorithmic}
-      \end{algorithm}
+      %\end{algorithm}
+        \vspace{.8cm}
 
       We can divide calls to \texttt{Lookup-LCS} into Type 1 calls in which $l[i,j]$ must be computed and Type 2 calls in which the value of $l[i,j]$
       is retrieved from the table.
@@ -320,7 +332,10 @@
       $r[i,i] = i$. This initialization is different than the initialization from $e$ and $w$, so it will be seen as an \texttt{if} statement in the
       pseudocode. Our algorithm is then the following:
 
-      \begin{algorithm}
+      \pagebreak
+
+      \vspace{1cm}
+      %\begin{algorithm}
         \begin{algorithmic}[1]
 
           \Function{Optimal-BST}{$p,q,n$}
@@ -352,14 +367,16 @@
 
           \EndFunction
         \end{algorithmic}
-      \end{algorithm}
+      %\end{algorithm}
+      \vspace{1cm}
 
-      We see from the pseudocode that the innermost loop runs at most $root[i+1,j] - root[i,j-1] + 1$ times. We do not know exactly how many times
+      We see from the pseudocode that the innermost loop runs at most ${root[i+1,j] - root[i,j-1] + 1}$ times. We do not know exactly how many times
       this is, but we can add up this time for all $i$ with a fixed $l$.
 
       Let $l \geq 2$. Then $j= i+l-1$. The largest number of times the inner two loops can run is given by
       \begin{align*}
-        \sum_{i=1}^{n-l+1} r[i+1,i+l-1] - r[i,i_l-2] + 1 &= r[n-l+2,n] - r[1,l-1] + n-l+1 \quad \parbox{3cm}{because the sum is telescoping} \\
+        \sum_{i=1}^{n-l+1} &r[i+1,i+l-1] - r[i,i_l-2] + 1 \\
+        &= r[n-l+2,n] - r[1,l-1] + n-l+1 \quad \parbox{3cm}{because the sum is telescoping} \\
         &\leq 2n - l \\
         &= O(n)
       \end{align*}
@@ -399,7 +416,7 @@
       In the original algorithm, we define
       \[ d_{ij}^{(k)} \gets \min \left( d_{ij}^{(k-1)}, d_{ik}^{(k-1)} + d_{kj}^{(k-1)} \right) .\]
 
-      When $d_{ij}^{(k)} \gets d_{ik}^{(k-1)} + d_{kj}^{(k-1)}$, we are concerned with an update of $d_{ik}^{(k-1)}$ to $d_{ik}^{(k)}$ or
+      When $d_{ij}^{(k)} \gets d_{ik}^{(k-1)} + d_{kj}^{(k-1)}$, we are concerned that an update of $d_{ik}^{(k-1)}$ to $d_{ik}^{(k)}$ or
       $d_{kj}^{(k-1)}$ to $d_{kj}^{(k)}$ could affect the values used in updating $d_{ij}^{(k)}$. For example, we may end up updating
       \[ d_{ij}^{(k)} \gets d_{ik}^{(k)} + d_{jk}^{(k-1)} .\]
 
@@ -488,7 +505,7 @@
 
       Putting this into an algorithm gives
       \vspace{.5cm}
-      \begin{algorithm}
+      %\begin{algorithm}
         \begin{algorithmic}[1]
           \Function{Edit-Distance}{$A,B$}
 
@@ -527,7 +544,7 @@
 
           \EndFunction
         \end{algorithmic}
-      \end{algorithm}
+      %\end{algorithm}
 
       This generates a matrix where the edit distance between $A$ and $B$ is contained in $e[m,n]$. To obtain the sequence of edits necessary to
       change $A$ to $B$, we must use the extra information stored in $p$. We do this by starting at the lower-right corner and traversing the arrows.
@@ -621,7 +638,10 @@
 
       This gives us the following algorithm:
 
-      \begin{algorithm}
+      \pagebreak
+
+      \vspace{1cm}
+      %\begin{algorithm}
         \begin{algorithmic}[1]
           \Function{Multiplication-Table}{$X$}
 
@@ -662,7 +682,8 @@
 
           \EndFunction
         \end{algorithmic}
-      \end{algorithm}
+      %\end{algorithm}
+      \vspace{1cm}
 
       All of the operations performed here are comparisons and assignments that take $O(1)$ time each. Each of the 3 loops is running over at most $n$
       values, so the overall running time of this algorithm is $O(n^3)$. A slightly more careful analysis would see our innermost loop is running over
@@ -674,7 +695,7 @@
         &= O \left( \frac{n(n+1)(2n+1)}{6} \right) \\
         &= O(n^3)
       \end{align*}
-      exactly as our initial analysis showed.
+      exactly as our initial crude analysis showed.
 
     \end{solution}
 
