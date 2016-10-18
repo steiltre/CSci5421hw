@@ -70,6 +70,9 @@
   \item
     \begin{problem}
       Ex. 23.1-5, p. 629
+
+      Let $e$ be a maximum-weight edge on some cycle of connected graph $G = (V,E)$. Prove that there is a minimum spanning tree of $G' = (V,E
+      \setminus \{e\})$ that is also a minimum spanning tree of $G$. That is, there is a minimum spanning tree of $G$ that does not include $e$.
     \end{problem}
 
     \begin{solution}
@@ -79,6 +82,17 @@
   \item
     \begin{problem}
       Ex. 23.1-10, p. 630
+
+      Given a graph $G$ and a minimum spanning tree $T$, suppose that we decrease the weigth of one of the edges in $T$. Show that $T$ is still a
+      minimum spanning tree for $G$. More formally, let $T$ be a minimum spanning tree for $G$ with edge weights given by weight functions $w$. Choose
+      one edge $(x,y) \in T$ and a positive number $k$, and define the weight function $w'$ by
+      \[ w'(u,v) =
+        \begin{cases} w(u,v) &\text{if } (u,v) \neq (x,y) , \\
+          w(x,y) - k &\text{if } (u,v) = (x,y) .
+        \end{cases}
+      \]
+      Show that $T$ is a minimum spanning tree for $G$ with edge weights given by $w'$.
+
     \end{problem}
 
     \begin{solution}
@@ -86,8 +100,34 @@
     \end{solution}
 
   \item
+    \begin{problem}
+      Ex. 16.4-4, p. 443
+
+      Let $S$ be a finite set and let $S_1, S_2, \dots, S_k$ be a partition of $S$ into nonempty disjoint subsets. Define the sturcture $(S,
+      \mathcal{I})$ by the condition that
+      \[ \mathcal{I} = \{ A \subseteq S : |A \cap S_i| \leq 1 \text{ for } i=1,2,\dots, k\}. \]
+      Show that $(S,
+      \mathcal{I})$ is a matroid. That is, the set of all sets $A$ that contain at most one member of each subset in the partition determines the
+      independent sets of a matroid.
+
+    \end{problem}
+
+    \begin{solution}
+
+    \end{solution}
 
   \item
+    \begin{problem}
+
+      Let $M = (S, \mathcal{I})$ be a matroid. Let $H$ be any given subset of $S$ and define
+      \[ \mathcal{I}' = \{ C | C \in \mathcal{I} \text{ and } C \cap H = \emptyset \} . \]
+      Prove that $M' = ( S, \mathcal{I}')$ is a matroid by showing that the defining properties of a matroid hold.
+
+    \end{problem}
+
+    \begin{solution}
+
+    \end{solution}
 
 \end{enumerate}
 
