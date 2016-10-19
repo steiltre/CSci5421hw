@@ -62,7 +62,49 @@
 
         \begin{proof}
 
+          Let $B = \{ \left[i_1, i_1 + 1\right), \left[i_2, i_2 + 1\right), \dots, \left[i_k, i_k+1\right) \}$ with $i_i \leq i_{i+1}$ for $1 \leq i
+          \leq k-1$ be an optimal set of intervals for $P$.
+          If $\left[p_1, p_1 + 1 \right) \in B$, then we are done.
+
+          Assume $\left[p_1, p_1 + 1\right) \not \in B$. Then we must have $i_1 < p_1$ because $p_1$ must be in some interval. We can replace $[ i_1,
+            i_1 + 1)$ with $[p_1, p_1 + 1)$. Because $p_1 < p_2< \dots < p_n$,
+              \[ B' = \left(B \setminus \{ [i_1, i_1 + 1) \} \right) \cup \left\{ [p_1, p_1+1) \right\} = \left\{ [p_1, p_1+1), [i_2, i_2+1), \dots, [i_2, i_2+1)
+              \right\} \]
+          is a set of intervals that contains $p_1, p_2, \dots, p_n$. The issue with replacing this interval is that we may have created $B'$ in such
+          a way that it contains overlapping intervals. If $B'$ doesn't have overlapping intervals, it will be an optimal solution because it has the
+          same number of intervals as $B$.
+
+          If $B'$ has an overlapping interval, the only possibility is ${ [p_1, p_1 +1) \cap [i_2, i_2 +1) \neq \emptyset }$ because $B$ did not contain
+            overlapping intervals. This means $i_2 < p_1 + 1$. In this case, we can replace $[ i_2, i_2 + 1)$ with $[p_1 + 1, p_1 + 2)$. Because
+              $[i_2, i_2 + 1) \subset [p_1, p_1 + 1) \cup [p_1 + 1, p_1 + 2) = [p_1, p_1 + 2)$, we must have
+                \[ B'' = \left(B' \setminus [i_2, i_2 + 1) \right) \cup \{ [p_1 + 1, p_1 + 2) \} \]
+              must contain $p_1, p_2, \dots, p_n$. We also see that by construction, $B''$ contains the same number of intervals as $B$.
+          This may cause another set of overlapping intervals. In this case, we repeat the same replacement procedure until we do not have overlapping
+          intervals. $B$ contains only $k$ intervals, so this process must terminate after a finite number of steps. This will result in a set of
+          intervals that contains $[p_1, p_1 + 1)$, contains no overlapping intervals, and has the same number of intervals as an optimal solution.
+            Therefore, we get an optimal solution with the desired property.
+
         \end{proof}
+
+        \begin{claim} (Optimal Substructure Property) Let $P' = P \setminus \{ p_i : p_i < p_1 + 1 \} = \{ p_i, p_{i+1}, \dots, p_n \}$ for some $i$. Let $B$ be an optimal solution constructed as
+          above. Then ${ B' = B \setminus \{ [p_1, p_1+1) \} }$ is an optimal solution for $P'$.
+        \end{claim}
+
+        \begin{proof}
+
+          By definition, $P'$ contains all points not contained in the first interval of the solution we are constructing. Therefore, $B'$ is a
+          solution for $P'$.
+
+          Assume $B'$ is not an optimal solution for $P'$. Then we can find an optimal solution $C$ with $|C| < |B'|$ (where the cardinality is
+          understood to be the finite number of intervals contained in each set). As in the proof of the greedy choice property, we can modify $C$ to
+          be an optimal solution which contains the interval $[ p_i, p_i +1).$ Then $C \cup \{ [p_1, p_1 + 1) \}$ contains all of the points in $P$.
+          By modifying $C$ to contain $[ p_i, p_i + 1)$, we know $C$ does not contain any overlapping intervals. Also,
+            \[ | C \cup \{ [ p_i, p_i + 1 ) \} | < |B'| + 1 = |B|. \]
+          This is a contradiction because $B$ was assumed to be an optimal solution. Therefore, we have the optimal substructure property.
+
+        \end{proof}
+
+        Because we have the Greedy Choice Property and the Optimal Substructure Property, our algorithm will return an optimal solution.
 
     \end{solution}
 
@@ -76,6 +118,8 @@
     \end{problem}
 
     \begin{solution}
+
+      We are going to order $A$ and $B$ in decreasing order.
 
     \end{solution}
 
