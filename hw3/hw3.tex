@@ -215,6 +215,13 @@
 
     \begin{solution}
 
+      Let $T$ be a minimum spanning tree for $G$. If $T$ does not contain $e$, we are done. Assume that $T$ does contain $e$. $T$ is a tree, so
+      removing $e$ partitions $T$ into two sets. Therefore, we have a cut $(S, V \setminus S)$ which the edge $e$ crosses. Because $e$ is part of a
+      cycle, there is another edge $\overline{e}$ that crosses this cut. We can find an edge ${e'}$ which
+      crosses the cut with $w(e') \leq w(d)$ for any edge $d$ crossing the cut. By the maximality of $w(e)$ in its cycle, we can take $e' \neq e$.
+      By Theorem 23.1, $e'$ is a safe edge for \textbf{FINISH THIS ARGUMENT}
+      Let $T' = T \setminus \{ e \} \cup \{ e' \}$. Then
+
     \end{solution}
 
   \item
