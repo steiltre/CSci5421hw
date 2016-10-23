@@ -216,11 +216,24 @@
     \begin{solution}
 
       Let $T$ be a minimum spanning tree for $G$. If $T$ does not contain $e$, we are done. Assume that $T$ does contain $e$. $T$ is a tree, so
-      removing $e$ partitions $T$ into two sets. Therefore, we have a cut $(S, V \setminus S)$ which the edge $e$ crosses. Because $e$ is part of a
+      removing $e$ partitions $T$ into two sets. Therefore, we have a cut $(S, V \setminus S)$ which the edge $e$ crosses and which respects $T
+      \setminus \{e\}$.
+
+      Because $e$ is part of a
       cycle, there is another edge $\overline{e}$ that crosses this cut. We can find an edge ${e'}$ which
       crosses the cut with $w(e') \leq w(d)$ for any edge $d$ crossing the cut. By the maximality of $w(e)$ in its cycle, we can take $e' \neq e$.
-      By Theorem 23.1, $e'$ is a safe edge for \textbf{FINISH THIS ARGUMENT}
-      Let $T' = T \setminus \{ e \} \cup \{ e' \}$. Then
+      Notice that $e' \not \in T$ because $T$ is a tree.
+
+      $T \setminus \{e\}$ is clearly contained in the minimal spanning tree $T$. We have defined $e'$ to be a light edge. Therefore, by
+      Theorem 23.1, $e'$ is a safe edge for $T \setminus \{e\}$. Therefore, $\left( T \setminus \{e\} \right) \cup \{e'\}$ is contained in some
+      minimal spanning tree $T'$. In fact,
+      \begin{align*}
+        \left| \left( T \setminus \{e\} \right) \cup \{e'\} \right| &= |T| \\
+        &= |V| - 1
+      \end{align*}
+      Therefore, the minimal spanning tree containg $\left( T \setminus \{e\} \right) \cup \{e'\}$ is
+      \[ T'= \left( T \setminus \{e\} \right) \cup \{e'\} .\]
+      Because we chose $e' \neq e$ with $e' \not \in T$, $T' \neq T$. Thus, we have a minimal spanning tree, $T'$, which does not contain $e$.
 
     \end{solution}
 
@@ -242,6 +255,31 @@
 
     \begin{solution}
 
+      Assume toward a contradiction that $T$ is not a minimum spanning tree for $G$ with edge weights given by $w'$. That means we can find a spanning
+      tree $T'$ with $w'(T) > w'(T')$. We know that $(x,y) \in T'$ or $(x,y) \not \in T'$.
+
+      If $(x,y) \in T'$, then we know
+      \begin{align*}
+        w(T') - k &= w'(T') \quad \parbox{5cm}{by definition} \\
+        &< w'(T) \quad \parbox{5cm}{by assumption} \\
+        &= w(T) - k \quad \parbox{5cm}{because $(x,y) \in T$}
+      \end{align*}
+
+      Therefore, we know $w(T') < w(T)$, contradicting the minimality of $w(T)$.
+
+      If $(x,y) \not \in T'$, then
+      \begin{align*}
+        w(T) &\leq w(T') \quad \parbox{5cm}{by minimality of $w(T)$} \\
+        &= w'(T') \quad \parbox{5cm}{because $(x,y) \not \in T'$} \\
+        &< w'(T) \quad \parbox{5cm}{by minimality of $w'(T')$} \\
+        &= w(T) - k \quad \parbox{5cm}{because $(x,y) \in T$}
+      \end{align*}
+
+      Therefore, $w(T) < w(T) - k$ where $k$ is a positive number, which is a contradiction.
+
+      Because we have reached a contradiction whether we assume $(x,y) \in T$ or $(x,y) \not \in T$, $T$ must be a minimal spanning tree for $G$ with
+      edge weights given by $w'$.
+
     \end{solution}
 
   \item
@@ -259,6 +297,15 @@
 
     \begin{solution}
 
+    Take a set $B \in \mathcal{I}$ and $A \subset B$. Because $|B \cap S_i| \leq 1$ for all $i$, $|A \cap S_i| \leq 1$ as well. Therefore $A \in
+    \mathcal{I}$, and $\mathcal{I}$ is hereditary.
+
+    Now take $A, B \in \mathcal{I}$ with $|A| < |B|$. Because $|A| < |B|$, there is some $j$ such that $|B \cap S_j| = 1$ and $|A \cap S_j| = 0$. Let
+    $x = B \cap S_j$. Then $A' = A \cup \{x\}$ satisfies $|A' \cup S_i| \leq 1$ for all $i$. Therefore, $A' \in \mathcal{I}$ and $M$ satisfies the
+    exchange property.
+
+    Thus, $M$ is a matroid.
+
     \end{solution}
 
   \item
@@ -271,6 +318,22 @@
     \end{problem}
 
     \begin{solution}
+
+      Let $B \in \mathcal{I}'$ and $A \subset B$. Because $\mathcal{I}$ is hereditary and $B \in \mathcal{I}$, $A \in \mathcal{I}$ as well. We also know
+      \[ A \cap H \subset B \cap H = \emptyset .\]
+      Therefore, $A \cap H = \emptyset$. Thus, $A \in \mathcal{I}'$ and $\mathcal{I}'$ is hereditary.
+
+      Now let $A, B \in \mathcal{I'}$ with $|A| < |B|$. Because $M$ satisfies the exchange property, there is some $x \in B$ such that $A
+      \cup \{x\} \in \mathcal{I}$. Also
+      \begin{align*}
+        \left( A \cup \{x\} \right) \cap H &\subseteq \left( A \cup B \right) \cap H \\
+        &= \left( A \cap H \right) \cup \left( B \cap H \right) \\
+        &= \emptyset \cup \emptyset \\
+        &= \emptyset
+      \end{align*}
+      Thus, $M'$ satisfies the exchange property.
+
+      Therefore, $M'$ is a matroid.
 
     \end{solution}
 
