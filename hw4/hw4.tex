@@ -1,0 +1,73 @@
+%        File: hw4.tex
+%     Created: Wed Oct 26 04:00 PM 2016 C
+% Last Change: Wed Oct 26 04:00 PM 2016 C
+%
+
+\documentclass[a4paper]{article}
+
+\title{CSci 5421 Homework 4 }
+\date{11/9/16}
+\author{Trevor Steil}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{esint}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem*{claim}{Claim}
+\newtheorem*{problem}{Problem}
+%\newtheorem*{lemma}{Lemma}
+\newtheorem{definition}{Definition}[section]
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\supp}[1]{\mathop{\mathrm{supp}}\left(#1\right)}
+\newcommand{\lip}[1]{\mathop{\mathrm{Lip}}\left(#1\right)}
+\newcommand{\curl}{\mathrm{curl}}
+\newcommand{\la}{\left \langle}
+\newcommand{\ra}{\right \rangle}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+
+\newenvironment{solution}{\emph{Solution.}}
+
+\begin{document}
+\maketitle
+\begin{enumerate}
+  \item
+    \begin{problem}
+
+      Recall the problem of task scheduling with deadlines and penalties (Sec. 16.5), which was discussed in class. This was solved using the generic
+      greedy algorithm for matroid optimization (Sec. 16.4). A key step in the algorithm is to test at each iteration whether a given set, $A$, of
+      tasks is independent, i.e., whether there exists a schedule in which no task of $A$ is late. This can be accomplished by using the following
+      fact: ``$A$ is independent if and only if $N_t(A) \leq t$ for $t=0,1,\dots,n$.'' Here $N_t(A)$ is the number of tasks in $A$ with deadline at
+      most $t$.
+
+      Give an algorithm that tests if $A$ is independent in $\Theta(|A|)$ time. Your answer should include a brief explanation of the key ideas behind
+      your approach, pseudocode, and run-time analysis. (Note that a running time of $\Theta(n)$ is easy to achieve but is too large when $|A| \ll n$.)
+
+      Hint: Consider limiting the range of values of $t$ that need to be checked in the fact stated above. Be sure to justify your reasoning.
+
+    \end{problem}
+
+  \item
+
+  \item
+
+  \item
+
+  \item
+
+  \item
+
+  \item
+
+\end{enumerate}
+\end{document}
+
+
