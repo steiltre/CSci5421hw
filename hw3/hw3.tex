@@ -52,7 +52,7 @@
 
     \begin{solution}
 
-      We will construct our collection of intervals by choosing the smallest value in $P$ which is not already contained in an interval. Let this
+      We begin by sorting $P$ in increasing order. We will construct our collection of intervals by choosing the smallest value in $P$ which is not already contained in an interval. Let this
       value be $p_i \in P$. We will then add the interval $[p_i, p_i + 1]$ to our collection of intervals. We must show that this algorithm has the
         Greedy Choice Property and Optimal Substructures.
 
@@ -104,11 +104,13 @@
           be an optimal solution which contains the interval $[ p_i, p_i +1].$ Then $C \cup \{ [p_1, p_1 + 1] \}$ contains all of the points in $P$.
           By modifying $C$ to contain $[ p_i, p_i + 1]$, we know $C$ does not contain any overlapping intervals. Also,
             \[ | C \cup \{ [ p_i, p_i + 1 ] \} | < |B'| + 1 = |B|. \]
-          This is a contradiction because $B$ was assumed to be an optimal solution. Therefore, we have the optimal substructure property.
+          This is a contradiction because $B$ was assumed to be an optimal solution. Therefore, $B'$ is an optimal solution for $P'$, and we have the optimal substructure property.
 
         \end{proof}
 
-        Because we have the Greedy Choice Property and the Optimal Substructure Property, our algorithm will return an optimal solution.
+        Because we have the Greedy Choice Property and the Optimal Substructure Property, our algorithm will return an optimal solution. This
+        algorithm requires scanning through $P$ a single time to determine which intervals need to be included, so the running time is dominated by
+        the sort which takes time $O(n \log n)$.
 
     \end{solution}
 
@@ -139,25 +141,20 @@
         \[ \tilde{B} = b_j, b_2, \dots, b_{j-1}, b_1, b_{j+1}, \dots, b_n .\]
 
         Without loss of generality, we will assume $b_1 \geq b_i$. If this were not the case, we would also swap $b_1$ and $b_i$ in the definition of
-        $B'$.
+        $\tilde{B}$.
 
         First, we will show that the portion of the product that has been modified has been made larger. That is $a_i^{b_j} a_1^{b_i} a_j^{b_1} \geq
         a_1^{b_1} a_i^{b_i} a_j^{b_j}$. We have
         \begin{align*}
-          \ln \left( \frac{a_i^{b_j} a_1^{b_i} a_j^{b_1}}{a_1^{b_1} a_i^{b_i} a_j^{b_j}} \right) &= \ln \left( a_i^{b_j - b_i} a_1^{b_i - b_1}
-          a_j^{b_1 - b_j} \right) \\
-          &\geq \ln \left( a_i^{b_j - b_i} a_1^{b_i - b_1} a_i^{b_1 - b_j} \right) \quad \parbox{5cm}{because $b_1 - b_j \leq 0$ and $a_i \geq a_j$} \\
-          &= \ln \left( a_i^{b_1 - b_i} a_1^{b_i - b_1} \right) \\
-          &\geq \ln \left( a_i^{b_1 - b_i} a_i^{b_i - b_1} \right) \quad \parbox{5cm}{because $b_i - b_1 \leq 0$ and $a_i \geq a_1$} \\
-          &= \ln (1) \\
-          &= 0
+          \frac{a_i^{b_j} a_1^{b_i} a_j^{b_1}}{a_1^{b_1} a_i^{b_i} a_j^{b_j}} &= a_i^{b_j - b_i} a_1^{b_i - b_1}
+          a_j^{b_1 - b_j} \\
+          &\geq a_i^{b_j - b_i} a_1^{b_i - b_1} a_i^{b_1 - b_j} \quad \parbox{5cm}{because $b_1 - b_j \leq 0$ and $a_i \geq a_j$} \\
+          &= a_i^{b_1 - b_i} a_1^{b_i - b_1} \\
+          &\geq a_i^{b_1 - b_i} a_i^{b_i - b_1} \quad \parbox{5cm}{because $b_i - b_1 \leq 0$ and $a_i \geq a_1$} \\
+          &= 1
         \end{align*}
 
-        where we have repeatedly used the fact that $\ln x$ is an increasing function of $x$.
-
-        Using the fact that $e^x$ is an increasing function of $x$, we have
-        \[ \frac{a_i^{b_j} a_1^{b_i} a_j^{b_1}}{a_1^{b_1} a_i^{b_i} a_j^{b_j}} \geq 1 ,\]
-        that is
+        Therefore,
         \begin{equation}\label{ineq:greedy1}
           a_i^{b_j} a_1^{b_i} a_j^{b_1} \geq a_1^{b_1} a_i^{b_i} a_j^{b_j} .
         \end{equation}
@@ -195,15 +192,18 @@
         \tilde{a}_2,\dots, \tilde{a}_n$ and $\tilde{B}' = \tilde{b}_2, \dots, \tilde{b}_n$ such that
         \[ \prod\limits_{k=2}^n \tilde{a}_k^{\tilde{b}_k} > \prod\limits_{k=2}^n a_k^{b_k} .\]
         Then
-        \[ a_1 \prod\limits_{k=2}^n \tilde{a}_k^{\tilde{b}_k} > a_1 \prod\limits_{k=2}^n a_k^{b_k} .\]
+        \[ a_1^{b_1} \prod\limits_{k=2}^n \tilde{a}_k^{\tilde{b}_k} > a_1^{b_1} \prod\limits_{k=2}^n a_k^{b_k} .\]
         Thus $\tilde{A} = a_1, \tilde{a}_2, \dots , \tilde{a}_n$ and $\tilde{B} = b_1, \tilde{b}_2, \dots, \tilde{b}_n$ is a reordering with a greater
         maximum, which contradicts the optimality of $A$ and $B$.
 
       \end{proof}
 
-      Because the Greedy Choice Property and the Optimal Substructure Property hold, this algorithm will yield an optimal solution.
+      Because the Greedy Choice Property and the Optimal Substructure Property hold, this algorithm will yield an optimal solution. This algorithm
+      only involves sorting $A$ and $B$, so it will have a running time of $O(n \log n)$.
 
     \end{solution}
+
+    \pagebreak
 
   \item
     \begin{problem}
@@ -231,7 +231,7 @@
         \left| \left( T \setminus \{e\} \right) \cup \{e'\} \right| &= |T| \\
         &= |V| - 1
       \end{align*}
-      Therefore, the minimal spanning tree containg $\left( T \setminus \{e\} \right) \cup \{e'\}$ is
+      Therefore, the minimal spanning tree containing $\left( T \setminus \{e\} \right) \cup \{e'\}$ is
       \[ T'= \left( T \setminus \{e\} \right) \cup \{e'\} .\]
       Because we chose $e' \neq e$ with $e' \not \in T$, $T' \neq T$. Thus, we have a minimal spanning tree, $T'$, which does not contain $e$.
 
@@ -241,8 +241,8 @@
     \begin{problem}
       Ex. 23.1-10, p. 630
 
-      Given a graph $G$ and a minimum spanning tree $T$, suppose that we decrease the weigth of one of the edges in $T$. Show that $T$ is still a
-      minimum spanning tree for $G$. More formally, let $T$ be a minimum spanning tree for $G$ with edge weights given by weight functions $w$. Choose
+      Given a graph $G$ and a minimum spanning tree $T$, suppose that we decrease the weight of one of the edges in $T$. Show that $T$ is still a
+      minimum spanning tree for $G$. More formally, let $T$ be a minimum spanning tree for $G$ with edge weights given by weight function $w$. Choose
       one edge $(x,y) \in T$ and a positive number $k$, and define the weight function $w'$ by
       \[ w'(u,v) =
         \begin{cases} w(u,v) &\text{if } (u,v) \neq (x,y) , \\
@@ -295,18 +295,21 @@
 
     \end{problem}
 
-    \begin{solution}
+    \begin{proof}
 
-    Take a set $B \in \mathcal{I}$ and $A \subset B$. Because $|B \cap S_i| \leq 1$ for all $i$, $|A \cap S_i| \leq 1$ as well. Therefore $A \in
-    \mathcal{I}$, and $\mathcal{I}$ is hereditary.
+    Take a set $B \in \mathcal{I}$ and $A \subset B$. $A \cap S_i \subset B \cap S_i$ for all $i$. Therefore,
+    \[ \left| A \cap S_i \right| \leq \left| B \cap S_i \right| \leq 1 \]
+    for $1 \leq i \leq k$. Then $A \in \mathcal{I}$, and $\mathcal{I}$ is hereditary.
 
     Now take $A, B \in \mathcal{I}$ with $|A| < |B|$. Because $|A| < |B|$, there is some $j$ such that $|B \cap S_j| = 1$ and $|A \cap S_j| = 0$. Let
-    $x = B \cap S_j$. Then $A' = A \cup \{x\}$ satisfies $|A' \cup S_i| \leq 1$ for all $i$. Therefore, $A' \in \mathcal{I}$ and $M$ satisfies the
+    $x = B \cap S_j$. Define $A' = A \cup \{x\}$. Then $A' \cap S_j = \{x\}$. Therefore, $A'$ satisfies $|A' \cap S_i| \leq 1$ for all $i$. Thus, $A' \in \mathcal{I}$ and $M$ satisfies the
     exchange property.
 
-    Thus, $M$ is a matroid.
+    Because $S$ is assumed to be finite, $\mathcal{I}$ is hereditary, and $M$ satisfies the exchange property, we know $M$ is a matroid.
 
-    \end{solution}
+    \end{proof}
+
+    \pagebreak
 
   \item
     \begin{problem}
@@ -317,7 +320,7 @@
 
     \end{problem}
 
-    \begin{solution}
+    \begin{proof}
 
       Let $B \in \mathcal{I}'$ and $A \subset B$. Because $\mathcal{I}$ is hereditary and $B \in \mathcal{I}$, $A \in \mathcal{I}$ as well. We also know
       \[ A \cap H \subset B \cap H = \emptyset .\]
@@ -333,9 +336,9 @@
       \end{align*}
       Thus, $M'$ satisfies the exchange property.
 
-      Therefore, $M'$ is a matroid.
+      Because $M$ is a matroid, we know $S$ is finite. Therefore, $M'$ is a matroid.
 
-    \end{solution}
+    \end{proof}
 
 \end{enumerate}
 
