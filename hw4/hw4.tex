@@ -14,6 +14,9 @@
 \usepackage{amssymb}
 \usepackage{esint}
 \usepackage{enumitem}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{corollary}{Corollary}[section]
@@ -57,6 +60,37 @@
     \end{problem}
 
     \begin{solution}
+
+      We can design the test for independence based on the observation that $N_t(A) \leq |A|$ for all $t$. Therefore, we only need to check the
+      condition $N_t(A) \leq t$ for $t=0,1,\dots,|A|$. We can use a table of size $|A|$ to calculate $N_t(A)$ for these values of $t$ as we scan over
+      activities in $A$. We will use $d_i$ to represent the deadlines of tasks in $A$ (as was done in class). This gives the following algorithm:
+
+      \begin{algorithmic}[1]
+        \Function{Independent-Tasks}{$A$}
+
+        \For{ $i \gets 1 .. |A|$ }
+        \State $N[i] \gets 0$
+        \EndFor
+
+        \For{ $i \gets 1 .. |A|$ }
+        \If{ $d_i \leq |A|$ }
+        \State $N[d_i] \gets N[d_i] + 1$
+        \EndIf
+        \EndFor
+
+        \For{ $i \gets 1 .. |A|$ }
+        \If{ $N[i] > i$ }
+        \Return $False$
+        \EndIf
+        \EndFor
+
+        \Return $True$
+        \EndFunction
+      \end{algorithmic}
+
+      This algorithm consists of a loop to initialize the array for storing $N_t(A)$, a loop to scan $d_i$ for, and a loop to see if $N_t(A) > t$ for
+      any $0 \leq i \leq |A|$. All three of these loops take values $0 \leq i \leq |A|$, so the algorithm is $O(|A|)$. The first two loops listed have
+      no way of exiting early and must take all possible values for $i$, so this algorithm is $\Theta(|A|)$.
 
     \end{solution}
 
