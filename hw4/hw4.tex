@@ -415,6 +415,28 @@
 
     \begin{solution}
 
+      In order to use the Generalized Augmentation Theorem, we must argue that
+      \begin{enumerate}
+        \item $x.diff$ depends only on $x$'s subtree, and
+        \item $x.diff$ can be computed in $O(1)$ time from information in $x, x.left,$ and $x.right$.
+      \end{enumerate}
+
+      $x.diff$ is defined to be the difference between $x$'s key and the minimum key contained in $x$'s subtree. Therefore, (a) holds.
+
+      The minimum key in $x$'s subtree must be contained in $x$'s left or right subtree, or it must be $x$'s key. Therefore, given the
+      information in $x, x.left$, and $x.right$, we can determine the minimum key as
+      \[ r =
+        \begin{cases}
+          0 &\text{if $x$ is an external node} \\
+          \min \{ x.left.key - x.left.diff, x.right.key - x.right.diff, x.key \} &\text{else}
+        \end{cases}
+      \]
+      Then we have $x.diff = x.key - r$. This value was computed using a constant number of additions and comparisons, so it was done in $O(1)$ time.
+      Thus (b) is satisfied as well.
+
+      Therefore, by the General Augmentation Theorem, the auxiliary field \texttt{diff} can be maintained during insertions and deletions while
+      keeping the $O(\log n)$ running time of these operations.
+
     \end{solution}
 
 \end{enumerate}
