@@ -178,6 +178,105 @@
 
     \begin{solution}
 
+      First, we need to create our radix tree. This will be built similarly to other trees with some small differences. Keys won't be stored in nodes;
+      they can be determined from the path traveled to get to a node. Nodes will have to contain a field to signify that a node is the terminal
+      character in a string in $S$. While inserting a string into the tree, several nodes may have to be added to include all of the string's digits.
+
+      \begin{algorithmic}
+        \Function{RADIX-TREE-INSERT}{$T,a$}
+
+        \State $x \gets T.root$
+        \State $y \gets T.nil$
+        \State $k \gets 0$
+
+        \While{ $k \leq a.length$ }
+        \State $y \gets x$
+        \If{ $a[k] = 0$ }
+        \State $x \gets x.left$
+        \Else
+        \State $x \gets x.right$
+        \EndIf
+
+        \If{ $x = T.nil$ }
+        \State $x \gets$ new node
+        \State $x.p \gets y$
+        \State $x.left \gets T.nil$
+        \State $x.right \gets T.nil$
+        \If{ $a[k] = 0$ }
+        \State $y.left \gets x$
+        \Else
+        \State $y.right \gets x$
+        \EndIf
+        \EndIf
+
+        \State $k \gets k+1$
+
+        \EndWhile
+
+        \State $x.terminal\_bit \gets TRUE$
+
+        \EndFunction
+
+      \end{algorithmic}
+
+      This insertion algorithm checks each bit of the string $a$ in order to determine which direction to go in the tree. The \texttt{while} loop that
+      loops over each bit of $a$ contains $O(1)$ comparisons and assignments. Therefore, the insertion operation is $\Theta(m)$ where $m = a.length$.
+
+      In order to completely build our tree, we must insert every string from the set $S$ into our tree. This gives the running time to build the tree
+      as
+      \[ \sum_{a \in S} \Theta(a.length) = \Theta(n). \]
+
+      Now we must sort the strings stored in our tree. A string stored in our tree will be lexicographically less than all of its descendents, and all
+      of the strings in a node's left subtree will be less than all of the strings in the node's right tree. To print these keys in order, we want to
+      print our current node, explore its left subtree, then explore its right subtree, in that order. This can be done recursively using the
+      following algorithm
+
+      \begin{algorithmic}
+
+        \Function{RADIX-TREE-SORT}{$T,x,prefix$}
+
+        \If{ $x \neq NIL$ }
+
+        \If{ $x.terminal\_bit = TRUE$ }
+        \State $\texttt{print } prefix$
+        \EndIf
+
+        \State $lprefix \gets prefix + "0"$
+        \State $rprefix \gets prefix + "1"$
+
+        \State $\texttt{RADIX-TREE-SORT}(T,x.left,lprefix)$
+        \State $\texttt{RADIX-TREE-SORT}(T,x.right,rprefix)$
+
+        \EndIf
+
+        \EndFunction
+
+      \end{algorithmic}
+
+      Our sorting takes a call to $\texttt{RADIX-TREE-SORT}(T,T.root,"")$. The running time of this sorting will depend on the number of nodes in
+      $T$. In our case, the worst case number of nodes is $n+1$ including the root.
+
+      Let $W(n)$ be the running time of this sort on a radix tree with $n$ nodes. We will use induction to show $W(n) = O(n)$.
+
+      For $n=0$, we have $W(0) = c$ for some constant $c$.
+
+      Let $n > 0$ and assume $W(m) \leq (c + d) n + c$ for all $m<n$ and for some $c,d$ where $d$ represents the time in \texttt{RADIX-TREE-SORT}
+      not spent in recursive calls. A call to \texttt{RADIX-TREE-SORT} involves a recursive
+      call on a tree of size $k$ and $n-k-1$ for some $k<n$. Including the time to combine the recursive calls, we have $W(n) \leq W(k) + W(n-k-1) +
+      d$. Using our induction hypothesis, we get
+      \begin{align*}
+        W(n) &\leq W(k) + W(n-k-1) + d \\
+        &\leq (c+d)k + c + (c+d)(n-k-1) + c + d \\
+        &= (c+d)n + d
+      \end{align*}
+
+      By induction, we have $W(n) \leq (c+d)n + d$ for all $n$, and $W(n) = O(n)$.
+
+      We can also see \texttt{RADIX-TREE-SORT} visits every node of $T$, meaning that $W(n) = \Omega(n)$. Therefore, $W(n) = \Theta(n)$.
+
+      We now have that building our radix tree and sorting the radix tree each take $\Theta(n)$ time. Therefore, sorting the strings in $S$ by using a
+      radix tree uses $\Theta(n)$ time overall.
+
     \end{solution}
 
   \item
