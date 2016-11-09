@@ -91,8 +91,8 @@
         \EndFunction
       \end{algorithmic}
 
-      This algorithm consists of a loop to initialize the array for storing $N_t(A)$, a loop to scan $d_i$ for, and a loop to see if $N_t(A) > t$ for
-      any $0 \leq i \leq |A|$. All three of these loops take values $0 \leq i \leq |A|$, so the algorithm is $O(|A|)$. The first two loops listed have
+      This algorithm consists of a loop to initialize the array for storing $N_t(A)$, a loop to scan $d_i$, and a loop to see if $N_t(A) > t$ for
+      any $0 \leq t \leq |A|$. All three of these loops take values $0 \leq i \leq |A|$, so the algorithm is $O(|A|)$. The first two loops listed have
       no way of exiting early and must take all possible values for $i$, so this algorithm is $\Theta(|A|)$.
 
     \end{solution}
@@ -113,7 +113,7 @@
 
     It suffices to show that any $n$-node binary search tree can be transformed into a
     right-going chain in $n-1$ rotations. This is because \texttt{LEFT-ROTATE} and \texttt{RIGHT-ROTATE} are inverses of each other. Let $T_1$ and
-    $T_2$ are binary search trees with $n$ nodes. Let $R_1, \dots R_k$ be the right rotations necessary to transform $T_1$ into a right-going chain,
+    $T_2$ be binary search trees with $n$ nodes. Let $R_1, \dots R_k$ be the right rotations necessary to transform $T_1$ into a right-going chain,
     that is, let
     \[ R_k ( R_{k-1}( \dots ( R_1(T_1) ) \dots) ) = C, \]
     where $C$ is a right-going chain of $n$ nodes. Similarly, let
@@ -144,7 +144,8 @@
     pointer in $T$ will place every node in $G$ after at most $n-1$ iterations. At this point, every node is traversable using only right pointers,
     that is, $T$ has been transformed into a right-going chain after $n-1$ iterations.
 
-    With the argument above, this completes the proof that any arbitrary $n$-node binary search tree can be transformed into any other $n$-node binary
+    With the argument above for the sufficiency of showing $T$ can be transformed into a right-going chain in at most $n-1$ rotations, this completes
+    the proof that any arbitrary $n$-node binary search tree can be transformed into any other $n$-node binary
     search tree in $O(n)$ rotations.
 
     \end{solution}
@@ -182,6 +183,8 @@
       they can be determined from the path traveled to get to a node. Nodes will have to contain a field to signify that a node is the terminal
       character in a string in $S$. While inserting a string into the tree, several nodes may have to be added to include all of the string's digits.
 
+      \pagebreak
+
       \begin{algorithmic}
         \Function{RADIX-TREE-INSERT}{$T,a$}
 
@@ -202,7 +205,8 @@
         \State $x.p \gets y$
         \State $x.left \gets T.nil$
         \State $x.right \gets T.nil$
-        \If{ $a[k] = 0$ }
+        \State $x.teminal\_bit \gets FALSE$
+        \If{ $a[k] = 0$ } \Comment{set child of $y$ appropriately}
         \State $y.left \gets x$
         \Else
         \State $y.right \gets x$
@@ -222,30 +226,31 @@
       This insertion algorithm checks each bit of the string $a$ in order to determine which direction to go in the tree. The \texttt{while} loop that
       loops over each bit of $a$ contains $O(1)$ comparisons and assignments. Therefore, the insertion operation is $\Theta(m)$ where $m = a.length$.
 
-      In order to completely build our tree, we must insert every string from the set $S$ into our tree. This gives the running time to build the tree
-      as
-      \[ \sum_{a \in S} \Theta(a.length) = \Theta(n). \]
+      In order to completely build our tree, we must insert every string from the set $S$ into our tree. Adding each of these contributions gives the running time to build the tree
+      to be $\Theta(n)$.
 
       Now we must sort the strings stored in our tree. A string stored in our tree will be lexicographically less than all of its descendents, and all
-      of the strings in a node's left subtree will be less than all of the strings in the node's right tree. To print these keys in order, we want to
+      of the strings in a node's left subtree will be less than all of the strings in the node's right subtree. To print these keys in order, we want to
       print our current node, explore its left subtree, then explore its right subtree, in that order. This can be done recursively using the
-      following algorithm
+      following algorithm which uses a list, $S\_sort$ to hold the sorted list of strings:
+
+      \pagebreak
 
       \begin{algorithmic}
 
-        \Function{RADIX-TREE-SORT}{$T,x,prefix$}
+        \Function{RADIX-TREE-SORT}{$T,x,prefix,S\_sort$}
 
         \If{ $x \neq NIL$ }
 
         \If{ $x.terminal\_bit = TRUE$ }
-        \State $\texttt{print } prefix$
+        \State $\texttt{ADD}(S\_sort, prefix)$ \Comment Add string to sorted set
         \EndIf
 
         \State $lprefix \gets prefix + "0"$
         \State $rprefix \gets prefix + "1"$
 
-        \State $\texttt{RADIX-TREE-SORT}(T,x.left,lprefix)$
-        \State $\texttt{RADIX-TREE-SORT}(T,x.right,rprefix)$
+        \State $\texttt{RADIX-TREE-SORT}(T,x.left,lprefix,S\_sort)$
+        \State $\texttt{RADIX-TREE-SORT}(T,x.right,rprefix,S\_sort)$
 
         \EndIf
 
@@ -253,7 +258,7 @@
 
       \end{algorithmic}
 
-      Our sorting takes a call to $\texttt{RADIX-TREE-SORT}(T,T.root,"")$. The running time of this sorting will depend on the number of nodes in
+      Our sorting takes a call to $\texttt{RADIX-TREE-SORT}(T,T.root,"",S\_sort)$, where $S\_sort$ is initially empty. The running time of this sorting will depend on the number of nodes in
       $T$. In our case, the worst case number of nodes is $n+1$ including the root.
 
       Let $W(n)$ be the running time of this sort on a radix tree with $n$ nodes. We will use induction to show $W(n) = O(n)$.
@@ -407,6 +412,8 @@
           start at $T.root$ and walk down the tree, choosing to go to the largest child at each step until the desired black height has been reached.
           The following pseudocode implements this strategy:
 
+          \pagebreak
+
           \begin{algorithmic}
 
             \Function{FIND-MAX-KEY-BH-NODE}{$T_1, T_2$}
@@ -415,7 +422,7 @@
             \State $y \gets T_1.root$
             \State $bh\_curr \gets T_1.bh$
 
-            \While{ $bh\_curr > bh\_target \Or y.color = \texttt{RED}$ }
+            \While{ $bh\_curr > bh\_target$ }
 
             \State $y \gets y.right$
 
@@ -432,9 +439,16 @@
           \end{algorithmic}
 
           This algorithm has a running time that is $O(\log n)$ because we are descending through a red-black tree, which has a height that is
-          $O(\log n)$. The node $y$ that is returned will be a \texttt{BLACK} node because the \texttt{while} loop is only exited when $y.color =
-          \texttt{BLACK}$. The black-height of $y$ is $T_2.bh$ because $bh\_curr$ starts at a value of $T_1.bh \geq T_2.bh$ and is decreased by at most 1 in
-          every iteration of the \texttt{while} loop. $y$ has the largest key of all nodes satisfying these conditions because it was chosen to be the
+          $O(\log n)$.
+
+          The node $y$ that is returned will be a \texttt{BLACK} node because descending through the tree, the black height is decreased
+          only at black nodes (the length of simple paths from a node to descendant leaves does not include the node itself by convention). Therefore,
+          the first node where $bh\_curr$ will decrease to where the \texttt{while} loop is exited will be a \texttt{BLACK} node.
+
+          The black-height of $y$ is $T_2.bh$ because $bh\_curr$ starts at a value of $T_1.bh \geq T_2.bh$ and is decreased by at most 1 in
+          every iteration of the \texttt{while} loop.
+
+          $y$ has the largest key of all nodes satisfying these conditions because it was chosen to be the
           largest possible at every step, and the structure of the binary search tree prevents a choice other than the greedy choice from giving the
           optimal answer. \textbf{SHOULD PROBABLY PROVE THIS}
 
