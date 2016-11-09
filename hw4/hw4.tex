@@ -185,7 +185,7 @@
 
       \pagebreak
 
-      \begin{algorithmic}
+      \begin{algorithmic}[1]
         \Function{RADIX-TREE-INSERT}{$T,a$}
 
         \State $x \gets T.root$
@@ -236,14 +236,14 @@
 
       \pagebreak
 
-      \begin{algorithmic}
+      \begin{algorithmic}[1]
 
         \Function{RADIX-TREE-SORT}{$T,x,prefix,S\_sort$}
 
         \If{ $x \neq NIL$ }
 
         \If{ $x.terminal\_bit = TRUE$ }
-        \State $\texttt{ADD}(S\_sort, prefix)$ \Comment Add string to sorted set
+        \State $\texttt{INSERT}(S\_sort, prefix)$ \Comment Add string to end of sorted set
         \EndIf
 
         \State $lprefix \gets prefix + "0"$
@@ -414,7 +414,7 @@
 
           \pagebreak
 
-          \begin{algorithmic}
+          \begin{algorithmic}[1]
 
             \Function{FIND-MAX-KEY-BH-NODE}{$T_1, T_2$}
 
@@ -450,13 +450,13 @@
 
           $y$ has the largest key of all nodes satisfying these conditions because it was chosen to be the
           largest possible at every step, and the structure of the binary search tree prevents a choice other than the greedy choice from giving the
-          optimal answer. \textbf{SHOULD PROBABLY PROVE THIS}
+          optimal answer.
 
         \item
           Replacing $T_y$ with $T_y \cup \{x\} \cup T_2$ is just a matter of correctly pasting $x$ in place of $y$ and attaching $T_y$ and $T_2$ as subtrees.
           This can be done with the following pseudocode:
 
-          \begin{algorithmic}
+          \begin{algorithmic}[1]
 
             \Function{TREE-MERGE}{$T_1, y, T_2, x$}
 
@@ -492,7 +492,7 @@
           The operation \texttt{RB-JOIN} has a running time of $O(\log n)$ because we have found all of its pieces to have a running time of $O(\log
           n)$. If we continue with the assumption that $T_1.bh \geq T_2.bh$, we have the following pseudocode for \texttt{RB-JOIN}:
 
-          \begin{algorithmic}
+          \begin{algorithmic}[1]
 
             \Function{RB-JOIN}{$T_1,x,T_2$}
 
