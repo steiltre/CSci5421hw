@@ -1,0 +1,179 @@
+%        File: hw5.tex
+%     Created: Wed Nov 16 06:00 PM 2016 C
+% Last Change: Wed Nov 16 06:00 PM 2016 C
+%
+
+\documentclass[a4paper]{article}
+
+\title{CSci Homework 5 }
+\date{11/30/16}
+\author{Trevor Steil}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{esint}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{bbm}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem*{claim}{Claim}
+\newtheorem*{problem}{Problem}
+%\newtheorem*{lemma}{Lemma}
+\newtheorem{definition}{Definition}[section]
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\supp}[1]{\mathop{\mathrm{supp}}\left(#1\right)}
+\newcommand{\lip}[1]{\mathop{\mathrm{Lip}}\left(#1\right)}
+\newcommand{\curl}{\mathrm{curl}}
+\newcommand{\la}{\left \langle}
+\newcommand{\ra}{\right \rangle}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+
+\newenvironment{solution}[1][]{\emph{Solution #1}}
+
+\algnewcommand{\Or}{\textbf{ or }}
+\algnewcommand{\And}{\textbf{ or }}
+
+\begin{document}
+\maketitle
+\begin{enumerate}
+  \item Exercise 14.3-3
+
+    \begin{problem}
+      Describe an efficient algorithm that, given an interval $i$, returns an interval overlapping $i$ that has the minimum low endpoint, or $T.nil$ if
+      no such interval exists.
+    \end{problem}
+
+    \begin{solution}
+
+    \end{solution}
+
+  \item
+
+    \begin{problem}
+      Let $S$ be a set of $n$ line segments in the plane, where each segment is either horizontal or vertical and is specified by the coordinates of
+      its two endpoints. (Assume, for convenience, that no two endpoints in the input have the same $x$- or $y$-coordinate.) Give an $O(n \log
+      n)$-time sweepline algorithm, to count the number of pairs of horizontal-vertical segments that intersect.
+
+      The output of your algorithm should merely be an integer equal to the number of intersecting horizontal-vertical pairs. (We are not interested
+      here in knowing which pairs of segments intersect, just the number of such pairs.) Your algorithm should use an order-statistics tree (OS-tree)
+      as the underlying data structure.
+
+      Describe the main ideas behind your solution (from which correctness should be evident), give pseudocode, and analyze the running time. You
+      should use the OS-tree, without modification, as a black-box, i.e., you do not have to write code for the operations you do on this structure.
+
+    \end{problem}
+
+    \begin{solution}
+
+    \end{solution}
+
+  \item Problem 17-2
+
+    \begin{problem}
+      Binary search of a sorted array takes logarithmic search time, but the time to insert a new element is linear in the size of the array. We can
+      improve the time for insertion by keeping several sorted arrays.
+
+      Specifically, suppose that we wish to support \texttt{SEARCH} and \texttt{INSERT} on a set of $n$ elements. Let $k = \lceil \log(n+1) \rceil$,
+      and let the binary representation of $n$ be $\la n_{k-1}, n_{k-2}, \dots, n_0 \ra$. We have $k$ sorted arrays $A_0, A_1, \dots, A_{k-1}$, where
+      for $i = 0,1,\dots, k-1$, the length of array $A_i$ is $2^i$. Each array is either full or empty, depending on whether $n_i = 1$ or $n_i = 0$,
+      respectively. The total number of elements held in all $k$ arrays is therefore $\sum_{i=0}^{k-1} n_i 2^i = n$. Although each individual array is
+      sorted, elements in different arrays bear no particular relationship to each other.
+
+      \begin{enumerate}
+        \item Describe how to perform the \texttt{SEARCH} operation for this data structure. analyze its worst-case running time.
+
+        \item Describe how to perform the \texttt{INSERT} operation. analyze its worst-case and amortized running times.
+      \end{enumerate}
+
+      It is enough to describe the search and insertion algorithms in words. In part (b), to analyze the amortized cost for insertion assume that you
+      start with an empty structure and do $n$ insertions into it.
+
+      Use the accounting (i.e. credits) method for your analysis. State clearly the invariant that you use and the number of credits assigned to each
+      operation.
+
+    \end{problem}
+
+    \begin{solution}
+
+    \end{solution}
+
+  \item
+
+    \begin{problem}
+      Let $A$ be a dynamic set of items, each with a real-valued key. Assume that $A$ is empty initially. We wish to support an arbitrary sequence of
+      operations on $A$, consisting of the queue operations \texttt{ENQUEUE} and \texttt{DEQUEUE}, and the operation \texttt{MINIMUM} which returns the
+      item in $A$ with the minimum key (the item is not removed from $A$). The goal is to develop a data structure for $A$ so that the amortized running
+      times of \texttt{ENQUEUE}, \texttt{DEQUEUE}, and \texttt{MINIMUM} are all $O(1)$. (Assume, for simplicity, that the keys in $A$ are always
+      distinct.)
+
+      Explain briefly the key ideas underlying your structure, give pseudocode for the operations, and establish the running times using the accounting
+      (i.e., credits) method of amortized analysis. State clearly the invariant that you use and the number of credits assigned to each operation.
+
+      Hint: Consider using a queue for \texttt{ENQUEUE} and \texttt{DEQUEUE} and another structure, holding a suitable subset of the queue, for
+      \texttt{MINIMUM}.
+
+      Note: The obvious heap-based solution is too expensive and is not of interest here.
+
+    \end{problem}
+
+    \begin{solution}
+
+    \end{solution}
+
+  \item
+
+    \begin{problem}
+      This problem assumes familiarity with Ch. 6. (Note that Ch. 6 consider max-heaps, whereas the problem below is for min-heaps; however, the two
+      notions are symmetric.)
+
+      Consider an implementation of a binary min-heap as a binary tree. It is known that \texttt{INSERT} and \texttt{EXTRACT-MIN} each take time
+      $O(\log n)$ in the worst case, where $n$ is the size of the heap. It is possible to use amortized analysis to derive a more informative bound,
+      as requested in part (a) below.
+
+      \begin{enumerate}
+        \item Use the potential method to prove the following: If an arbitrary sequence of $n$ operations, consisting of \texttt{INSERT} and
+          \texttt{EXTRACT-MIN}, is done on an initially-empty heap, then the amortized cost of \texttt{INSERT} is $O(\log n)$ and that of
+          \texttt{EXTRACT-MIN} is $O(1)$. do not change these operations in any way. Describe your potential function carefully and show that it
+          works.
+
+          Hint: Relate your potential function to the depths of the nodes in the heap.
+
+        \item
+          Is it possible to achieve an amortized cost of $O(\log n)$ for \texttt{EXTRACT-MIN} and $O(1)$ for \texttt{INSERT}? Justify your answer.
+
+      \end{enumerate}
+
+    \end{problem}
+
+    \begin{solution}
+
+    \end{solution}
+
+  \item Exercise 17.4-2
+
+    \begin{problem}
+      Show that if $\alpha_{i-1} \geq \frac{1}{2}$, and the $i$th operation on a dynamic table is \texttt{TABLE-DELETE}, then the amortized cost of
+      the operation with respect to the potential function (17.6) is bounded above by a constant.
+    \end{problem}
+
+    \begin{solution}
+
+    \end{solution}
+
+\end{enumerate}
+\end{document}
+
+
