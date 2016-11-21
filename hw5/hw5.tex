@@ -44,7 +44,7 @@
 \newenvironment{solution}[1][]{\emph{Solution #1}}
 
 \algnewcommand{\Or}{\textbf{ or }}
-\algnewcommand{\And}{\textbf{ or }}
+\algnewcommand{\BAnd}{\textbf{ and }}
 
 \begin{document}
 \maketitle
@@ -57,6 +57,44 @@
     \end{problem}
 
     \begin{solution}
+
+      This algorithm is very similar to \texttt{INTERVAL-SEARCH} given in the textbook. The only difference is that \texttt{INTERVAL-SEARCH} stops as
+      soon as it finds an interval that overlaps $i$. After an initial overlapping interval, $i'$ is found, there may be an interval $i''$ in the
+      left subtree of $i'$ that overlaps $i$ and because $T$ is sorted by low endpoint of intervals, $i''.low \leq i'.low$. Notice that any interval
+      $i_r$ in the right subtree of $i'$ will satisfy $i'.low \leq i_r.low$, so we do not want to continue searching for overlaps in the right subtree
+      after an overlap is found.
+
+      Therefore, our algorithm will be the same as \texttt{INTERVAL-SEARCH} except that it will allow for the search to continue along the left
+      subtree after an initial overlap is found. This algorithm is given by the following pseudocode:
+
+      \begin{algorithmic}[1]
+
+        \Function{Interval-Search-Min}{$T,i$}
+
+        \State $x \gets T.root$
+
+        \While{ ${x \neq T.nil \BAnd ( i \text{ does not overlap } x.int \Or x.left.max \geq i.low ) }$}
+        \If{ $x.left \neq T.nil \BAnd x.left.max \geq i.low$ }
+        \State $x \gets x.left$
+        \Else
+        \State $x \gets x.right$
+        \EndIf
+        \EndWhile
+
+        \Return x
+
+        \EndFunction
+
+      \end{algorithmic}
+
+      Just as in the case of \texttt{INTERVAL-SEARCH}, this algorithm will return an interval that overlaps $i$ if one exists, or it will return
+      $T.nil$ if no such interval exists. By the argument given above, this algorithm will return the interval that overlaps $i$ with the minimum low
+      endpoint because at each step in the \texttt{while} loop, we continue searching if $i$ does not overlap the current interval or if there is an
+      interval in the left subtree that intersects $i$.
+
+      \texttt{INTERVAL-SEARCH-MIN} runs in $O( \log n )$ time. The underlying data structure for $T$ is a red-black tree, so the height of $T$ is $O(
+      \log n)$. \texttt{INTERVAL-SEARCH-MIN} descends one level in $T$ during each interation of the \texttt{while} loop and performs $O(1)$
+      operations, giving the claimed running time.
 
     \end{solution}
 
@@ -77,6 +115,20 @@
     \end{problem}
 
     \begin{solution}
+
+      We can find the number of overlapping intervals by using a vertical sweepline, $D$. We will then keep the heights of ``active'' horizontal intervals
+      in an Order-Statistic Tree, $T$. There are three important types of values our sweepline can reach:
+      \begin{enumerate}
+        \item When $D$ reaches the left endpoint of a horizontal interval, we add the height of the horizontal interval to $T$.
+        \item When $D$ reaches the right endpoint of a horizontal interval, we remove the height of the horizontal interval from $T$. (By assumption,
+          we have all heights being distinct, so this operation is well-defined.)
+        \item When $D$ reaches a vertical segment, we determine how many horizontal intervals this segment intersects. This can be done by temporarily
+          adding the lower and upper height values to $T$, using the rank of each to compute the number of intersecting intervals, and then removing
+          lower and upper heights for the vertical segment from $T$.
+      \end{enumerate}
+
+      This algorithm will require sorting all relevant $x$-values, which takes $O( n \log n )$ time, and inserting and removing nodes from an OS-tree
+      which takes $O( \log n )$ time for each insertion and deletion. This will then leave us with an algorithm that runs in $O( n \log n)$ time.
 
     \end{solution}
 
