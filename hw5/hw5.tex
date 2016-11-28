@@ -130,6 +130,55 @@
       This algorithm will require sorting all relevant $x$-values, which takes $O( n \log n )$ time, and inserting and removing nodes from an OS-tree
       which takes $O( \log n )$ time for each insertion and deletion. This will then leave us with an algorithm that runs in $O( n \log n)$ time.
 
+      We will use $(x_i, y_i)$ to denote the enpoints of all intervals in $S$. We have the following pseudocode for this algorithm:
+      \begin{algorithmic}[1]
+
+        \Function{CountIntersectingSegments}{$S$}
+
+        \State $T \gets \emptyset$
+        \State $intersection \gets 0$
+        \State Sort the $(x_i, y_i)$ based on nondecreasing $x$-values. Break any ties (which only happen for the two endpoints of vertical segments,
+        by assumption) in order of nondecreasing $y$-values. Use $(x_i, y_i)$ to refer to this list of points in sorted order. Also, note whether each
+        $(x_i, y_i)$ belongs to a vertical or horizontal segment.
+        \For{ $i \gets 0..2n$}
+        \If{ $(x_i,y_i)$ is part of horizontal segment }
+        \State $node \gets \texttt{Search}(T,y_i)$
+        \If{ $node = T.nil$ } \Comment{ $y_i$ not already in $T$ }
+        \State $\texttt{Insert}(T,y_i)$
+        \Else \Comment{ $y_i$ already in $T$ }
+        \State $\texttt{Delete}(T,y_i)$
+        \EndIf
+        \ElsIf{ $(x_i,y_i)$ is part of a vertical segment }
+        \State $node \gets \texttt{Search}(T,y_i)$
+        \If{ $node = T.nil$ }
+        \State $\texttt{Insert}(T,y_i)$
+        \State $\texttt{Insert}(T,y_{i+1})$
+        \State $upper \gets \texttt{Rank}(T,y_{i+1})$
+        \State $lower \gets \texttt{Rank}(T,y_i)$
+        \State $intersection \gets intersection + upper - lower - 1$
+        \Else
+        \State $\texttt{Delete}(T,y_i)$
+        \State $\texttt{Delete}(T,y_{i-1})$
+        \EndIf
+        \EndIf
+        \EndFor
+
+        \Return $intersection$
+
+        \EndFunction
+
+      \end{algorithmic}
+
+      In this algorithm, we use the \texttt{Search} operation to determine if endpoints of horizontal segments are left or right endpoints based on
+      whether or not the associated height is already in the OS-tree (right endpoints will already have their heights entered, left endpoints will
+      not). Similarly, we use \texttt{Search} to determine if endpoints of vertical segments are top or bottom endpoints. In order for this to work,
+      we require that distinct intervals must have unique heights for its endpoints, which is an assumption given in the problem.
+
+      The algorithm given begins by sorting the list of $2n$ endpoints, which takes $O(n \log n)$ time. In each iteration of the \texttt{for} loop, a
+      single \texttt{Search} is performed along with one or two \texttt{Insert} or \texttt{Delete}, all of which take $O(\log n)$ time. In the case of
+      a new vertical segment being reached, we add two \texttt{Rank} operations, which also require $O(\log n)$ time. This loop is executed $2n$
+      times, so the overall running time, including the sort, is $O(n \log n)$.
+
     \end{solution}
 
   \item Problem 17-2
@@ -160,6 +209,80 @@
 
     \begin{solution}
 
+      \begin{enumerate}
+        \item
+          The \texttt{SEARCH} operation can be performed by searching for the desired element in each of the full arrays. The worst case for this
+          searching is when all of the arrays are full and each array must be searched. In this case, a search must be performed on an array of size
+          $2^i$ for every $0 \leq i \leq k-1$. Let $T$ be the worst case running time for the \texttt{SEARCH} operation. Because eachi $A_i$ is
+          sorted, we can perform a binary search on $A_i$, which has a logarithmic running time. Therefore, we get
+          \begin{align*}
+            T &= \sum_{i=0}^{k-1} \log( 2^i ) \\
+            &= \sum_{i=0}^{k-1} \\
+            &= \frac{k(k-1)}{2} \\
+            &= O(k^2) \\
+            &= O( \log^2 n ) \quad \parbox{5cm}{by definition of $k$}
+          \end{align*}
+
+        \item
+          To insert an element, we can begin by creating an array $A_0'$ containing only the new element and trying to copy $A_0'$ into $A_0$.
+          If $A_0$ is already full, we can sort and merge $A_0$ and $A_0'$ into an array $A_1'$ and try
+          copying $A_1'$ into $A_1$. If $A_1$ is already full, we can merge and sort the arrays into a single array, $A_2'$, of size 4
+          and try placing this array in $A_2$. We continue merging arrays until we come to an empty array to place the elements in. Notice that
+          because each of the $A_i$ is already sorted, merging two arrays in this algorithm is the same as performing the ``Merge'' operation from
+          MergeSort, which can be done in linear time. We will only be using a single temporary array $A_i'$ for this algorithm at any given time.
+
+          In the worst case, the $A_i$ is already full for $0 \leq i \leq k-2$, and all elements must be merged into $A_{k-1}$. Let $T$ be the
+          worst-case running time of the \texttt{INSERT} operation. We know the merge operation is $O(m)$, where $m$ is the size of the arrays to
+          merge. For simplicity of constants involved, we will assume the time to merge two arrays of size $m$ is bounded by $2m$. Then we have
+          \begin{align*}
+            T &\leq \sum_{i=0}^{k-2} 2 * 2^{i} \\
+            &= 2 (2^{k-1} - 2) \\
+            &= 2^k - 4 \\
+            &\leq 2^{\log(n+1)+1} - 4 \\
+            &= 2n - 2 \\
+            &= O(n)
+          \end{align*}
+          So this still gives a worst-case running time that is linear in $n$.
+
+          Next, we must perform an amortized analysis. First we notice that in our \texttt{INSERT} operation, we try inserting the element into $A_0$,
+          but it may need to be merged with other arrays and moved into $A_i$ for $i>0$, but it can only be merged into subsequent $A_i$ arrays at
+          most $k$ times. We will assign each element $2k+2$ credits when it is inserted.
+
+          \underline{Invariant:} Each element in array $A_i$ has at least $2(k-i)$ credits for all $i$.
+
+          This invariant vacuously holds upon initialization because all arrays are empty.
+
+          To prove this invariant holds after insertion of a new element, we will need to simultaneously prove that each element of $A_i'$ has at
+          least $2(k-i) + 1$ credits. This claim is clear if no $A_i$ is full.
+
+          Now assume the invariant holds before insertion of another element. If $A_0$ is empty, the new element is inserted into $A_0'$, leaving it
+          with $2k+1 = 2(k-0)+1$ credits, so the invariant for $A_0'$ holds. This array is then copied to $A_0$, which requires a single insertion,
+          leaving $2k = 2(k-0)$ credits for the single element in $A_0$. All subsequent arrays are untouched, so the invariant holds.
+
+          Now we must handle the case of merges. Assume the
+          invariant holds for $A_i$ and $A_i'$.
+
+          If during an insertion, we have $A_i'$ full and $A_i$ empty, we copy $A_i'$ into $A_i$, which requires 1 credit from each element in $A_i'$.
+          This leaves each element with $2(k-1)$ credits, and the invariant for $A_i$ is satisfied.
+
+          Now assume, $A_i'$ and $A_i$ are both full. Then the two arrays must be merged, which requires $2i$ credits by assumption, that is, it
+          requires 1 credit from each element in $A_i$ and $A_i'$. This creates the array $A_{i+1}'$. Then each element of $A_{i+1}'$ has at least
+          \begin{align*}
+            2(k-i) - 1 &= 2(k-(i+1)) + 1 \\
+          \end{align*}
+          credits if it started in $A_i$, and it has at least
+          \begin{align*}
+            2(k-i) &\geq 2(k-(i+1)) + 1
+          \end{align*}
+          if it started in $A_i'$. Therefore, the invariant is satisfied for $A_{i+1}'$.
+
+          Therefore, we have that during an insertion, the invariant for $A_i'$ holds at every step until an empty $A_i$ is reached. Then after
+          copying, the invariant holds for $A_i$. For all $j < i$, $A_j$ is left empty, and for all $j>i$, $A_j$ is never modified. Thus each element
+          of $A_i$ has at least $2(k-i)$ credits for all $i$, and the invariant holds.
+
+          Therefore, we have an amortized cost of $2k = O( \log n )$ by the definition of $k$.
+      \end{enumerate}
+
     \end{solution}
 
   \item
@@ -182,6 +305,87 @@
     \end{problem}
 
     \begin{solution}
+
+      A standard queue can efficiently implement the \texttt{ENQUEUE} and \texttt{DEQUEUE} operations. We must work to implement the \texttt{MINIMUM}
+      operation in such a way that it doesn't significantly increase the running time of the other operations.
+
+      From the first in, first out order of \texttt{ENQUEUE} and \texttt{DEQUEUE}, we see that when a value is added to the queue, all values already
+      in the queue that are larger than the new value could never be the minimum.
+
+      We can use this observation to keep a list of values that contains the sequence of minimums. This means the first entry in the list will be the
+      current minimum value in the queue, the second will be the minimum we would have if \texttt{DEQUEUE} operations were performed until the current
+      minimum was removed, and so on. We notice that this list is then an increasing sequence of numbers.
+
+      The \texttt{MINIMUM} operation then returns the first entry in this list. Our \texttt{DEQUEUE} operation removes
+      the next element from the queue and checks if that element is the first entry in the list. If so, it removes that entry from the list as well.
+      Our \texttt{INSERT} operation adds the new entry to our queue and our list. It must then perform the task of making our list an increasing
+      sequence that contains the new value, that is all larger values already in the queue must be removed from consideration for being the minimum.
+
+      Let $Q$ be our queue and $S$ be our list of minimum values. We have the following pseudocode:
+
+      \begin{algorithmic}[1]
+
+        \Function{Minimum}{$Q,S$}
+        \State
+        \Return $S[1]$
+        \EndFunction
+
+      \end{algorithmic}
+
+      \begin{algorithmic}[1]
+
+        \Function{Dequeue}{$Q,S$}
+        \State $x \gets \texttt{StandardDequeue}(Q)$
+        \If{ $x = S[1]$ }
+        \State \texttt{Delete}$(S,S[1])$
+        \EndIf
+        \EndFunction
+
+      \end{algorithmic}
+
+      \begin{algorithmic}[1]
+
+        \Function{Enqueue}{$Q,S,x$}
+
+        \State \texttt{StandardEnqueue}$(Q,x)$
+
+        \While{ $S[length(S)] > x$ }
+        \State \texttt{Delete}$(S, S[length(S)])$
+        \EndWhile
+
+        \State \texttt{Insert}$(S,x)$
+
+        \EndFunction
+
+      \end{algorithmic}
+
+      From this pseudocode, we can quickly see that \texttt{MINIMUM} and \texttt{DEQUEUE} are $O(1)$ worst-case operations and should therefore have a $O(1)$
+      amortized cost as well. On the other hand, \texttt{ENQUEUE} has $O(n)$ worst-case running time.
+
+      Now we must assign our amortized costs to each of these operations. We assign 1 credit to \texttt{MINIMUM}, 1 credit to \texttt{DEQUEUE}, and 6
+      credits for \texttt{ENQUEUE}.
+
+      \underline{Invariant}: Every element in $Q$ has 1 credit stored on it, and every element in $S$ has 2 credits stored on it.
+
+      The invariant holds trivially upon initialization, when $Q$ and $S$ are empty.
+
+      Assume the invariant holds. We must not see what happens under each of these operations.
+
+      If the next operation is a \texttt{MINIMUM}, we use the single credit to access $S[1]$. Thus, the invariant still holds.
+
+      Assume the next operation is a \texttt{DEQUEUE}. There is a single credit on the element that is removed from $Q$ that pays for its removal. We
+      use the single allocated credit to access $S[1]$. If necessary, we use one of the credits attached to $S[1]$ to remove it from $S$. We kept a
+      non-negative number of credits on all elements, and the invariant still holds because all modified elements were removed.
+
+      Assume the next operation is a \texttt{ENQUEUE}. We use one of the credits to insert the element into $Q$, and attach another credit to this new
+      element in $Q$ (for later use in \texttt{DEQUEUE}). We use another credit to insert the element into $S$, and attach two credits to this new
+      element in $S$. This leaves a single credit to handle the removal of all elements in $S$ greater than the new element. Let $x$ be the element
+      being inserted and $y$ be the last element in $S$. If $x < y$, we pay for the comparison and removal of $y$ using the two credits attached to
+      $y$ in $S$. If $x > y$, we pay for the comparison with our last available credit. The only elements of $S$ that had credits taken away were
+      removed, and the new element has been given one credit in $Q$ and two credits in $S$. Therefore, the invariant holds.
+
+      Therefore, the invariant always holds, and we were able to maintain it without having a credit deficit on any element. This tells us the amortized
+      cost of each of the operations is $O(1)$ because we allocated a constant number of credits for each type of operation.
 
     \end{solution}
 
