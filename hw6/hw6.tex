@@ -53,6 +53,8 @@
     \begin{problem}
       Suppose that a stack, $S$, has $s>0$ items on it initially and an arbitrary sequence of $n$ \texttt{PUSH} and \texttt{MULTIPOP} operations is
       executed. Use the potential method of amortized analysis to show that the total actual cost of the sequence is $O(n)$, if $n = \Omega(s)$.
+
+      Note: You will find the discussion beginning at the bottom of page 461 helpful.
     \end{problem}
 
     \begin{solution}
@@ -60,8 +62,64 @@
     \end{solution}
 
   \item
+    \begin{problem}
+      Show the Fibonacci heap that results from performing a \texttt{FIB-HEAP-DELETE-MIN} operation on the Fibonacci heap, $h$, given in the
+      assignment. Show intermediate steps (including those done during consolidation) and marked nodes clearly. (Marked nodes are indicated by a '*'.)
+      For consistency, do consolidation starting from the root to the right of the current minimum node.
+    \end{problem}
 
-  \item
+    \begin{solution}
+      See attachment at end.
+    \end{solution}
+
+  \item Problem 19-1
+    \begin{problem}
+      \textbf{Alternative implementation of deletion}
+
+      Professor Pisano has proposed the following variant of the \texttt{FIB-HEAP-DELETE} procedure claiming that it runs faster when the node being
+      deleted is no the node pointed to by $H.min.$
+
+      \begin{algorithmic}[1]
+        \Function {Pisano-Delete}{$H,x$}
+
+        \If{ $ x = H.min$ }
+        \State \texttt{FIB-HEAP-EXTRACT-MIN}$(H)$
+        \Else
+        \State $y \gets x.p$
+        \If{ $y \neq H.nil$ }
+        \State \texttt{CUT}$(H,x,y)$
+        \State \texttt{CASCADING-CUT}$(H,y)$
+        \EndIf
+        \State add $x$'s child list to the root list of $H$
+        \State remove $x$ from the root list of $H$
+        \EndIf
+
+        \EndFunction
+      \end{algorithmic}
+
+      \begin{enumerate}
+        \item The professor's claim that this procedure runs faster is based partly on the assumption that line 7 can be performed in $O(1)$ actual
+          time. What is wrong with this assumption?
+
+        \item Give a good upper bound on the actual time of \texttt{PISANO-DELETE} when $x$ is not $H.min$. Your bound should be in terms of
+          $x.degree$ and the number $c$ of calls to the \texttt{CASCADING-CUT} procedure.
+
+        \item
+          Suppose that we call \texttt{PISANO-DELETE}$(H,x)$ and let $H'$ be the Fibonacci heap that results. Assuming that node $x$ is not a root,
+          bound the potential of $H'$ in terms of $x.degree, c, t(H)$, and $m(H)$.
+
+        \item
+          Conclude that the amortized time for \texttt{PISANO-DELETE} is asymptotically no better than for \texttt{FIB-HEAP-DELETE}, even when $x \neq
+          H.min$.
+      \end{enumerate}
+
+      Use the potential function $\varphi(H) = t(H) + 2 m(H)$.
+
+    \end{problem}
+
+    \begin{solution}
+
+    \end{solution}
 
   \item
 
