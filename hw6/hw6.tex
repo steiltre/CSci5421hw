@@ -59,6 +59,33 @@
 
     \begin{solution}
 
+      This is the same as the potential method starting from an empty stack with a slight modification when amortized costs are summed. As before we
+      define our potential function to be
+      \[ \varphi(S) = |S|, \]
+      that is, our potential function is the size of the stack. We then define $\widehat{c}_i = c_i + \varphi_i - \varphi_{i-1}$ where $\widehat{c}_i$
+      is the amortized cost of the $i^{th}$ operation, $c_i$ is the actual cost of the $i^{th}$ operation, and $\varphi_i$ is the potential function
+      after the $i^{th}$ operation. This leads to the same amortized costs as before:
+      \[ \widehat{c}_i =
+        \begin{cases}
+          2 &\text{ if $i^{th}$ operation is \texttt{PUSH} } \\
+          0 &\text{ if $i^{th}$ operation is \texttt{MULTIPOP} .}
+        \end{cases}
+      \]
+
+      Then we have
+      \begin{align*}
+        \sum_{i=1}^n \widehat{c}_i &= \sum_{i=1}^n (c_i + \varphi_i - \varphi_{i-1}) \\
+        &= \sum_{i=1}^n c_i + \varphi_n - \varphi_0 \quad \parbox{5cm}{because of the telescoping sum} \\
+        &= \sum_{i=1}^n c_i + \varphi_n - s \quad \parbox{5cm}{because stack initially contains $s$ elements}
+      \end{align*}
+
+      Because $\varphi_n \geq 0$ by definition, we get the upper bound
+      \[ s + \sum_{i=1}^n \widehat{c}_i \geq \sum_{i=1}^n c_i .\]
+      By definition, $\widehat{c}_i = O(1)$, so
+      \[ s + O(n) \geq \sum_{i=1}^n c_i .\]
+      We assumed $n = \Omega(s)$, which is equivalent to $s = O(n)$, so
+      \[ \sum_{i=1}^n c_i = O(n) .\]
+
     \end{solution}
 
   \item
@@ -122,8 +149,64 @@
     \end{solution}
 
   \item
+    \begin{problem}
+      Suppose that a sequence of update operations is performed on a persistent red-black tree, $T$, starting from an initially-empty tree. Assume that
+      $T$ is implemented using the limited node-copying method. Use the accounting method to prove that the amortized space cost of each update
+      operation is $O(1)$. State clearly the invariant you use and the amortized cost that you assign to each update operation.
+    \end{problem}
+
+    \begin{solution}
+
+    \end{solution}
 
   \item
+    \begin{problem}
+      Let $S=\{ p_i = (x_i,y_i), 1 \leq i \leq n \}$ be a set of $n$ points in the plane. Assume, for simplicity, that all points have positive and
+      distinct $x$- and $y$-coordinates. We would like to pre-process $S$ into a data structure so that the following query can be answered
+      efficiently:
+
+      Given any query rectangle $q = [a,b] \times [0,c]$, resting on the $x$-axis, report the $x$-coordinates of the points of $S$ that are contained
+      in $q$.
+
+      The desired time bounds are $O(n)$ space, $O(n \log n)$ pre-processing time, and $O(K + \log n)$ query time, where $K$ is the number of reported
+      points.
+
+      Do the following:
+
+      \begin{enumerate}
+        \item
+          Show how to build a data structure for this problem that is based on a persistent red-black tree. Describe briefly the main ideas and give
+          pseudocode.
+
+        \item
+          Show how to query the structure. Describe briefly the main ideas, give pseudocode, and argue briefly why the query algorithm works.
+
+        \item
+          Analyze carefully the space, pre-processing time, and query time of your solution.
+
+      \end{enumerate}
+
+      Note: Assume you have available persistent counterparts to the routines for standard (i.e., non-persistent) red-black trees. Specifically, there
+      are available routines \texttt{Insert(tree, key, time)}, \texttt{Delete(tree,key,time)}, \texttt{Search(tree, key, time)} to insert, delete, or
+      search a key in a persistent red-black tree at some time instant, as well as a routine \texttt{Access-Range(tree, range, time)} to retrieve from
+      a persistent red-black tree the $K$ keys that lie in some range (i.e., interval) at some time instant in $O(K + \log n)$ time. (You may not need
+      all of these in your solution.) Assume that the ``limited node copying'' method is used. Treat the persisten red-black tree as a black-box and
+      issue calls to the above routines as appropriate.
+
+    \end{problem}
+
+    \begin{solution}
+
+      \begin{enumerate}
+        \item
+
+        \item
+
+        \item
+
+      \end{enumerate}
+
+    \end{solution}
 
 \end{enumerate}
 \end{document}
