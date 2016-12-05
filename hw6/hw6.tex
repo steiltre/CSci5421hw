@@ -125,7 +125,7 @@
       \end{algorithmic}
 
       \begin{enumerate}
-        \item The professor's claim that this procedure runs faster is based partly on the assumption that line 7 can be performed in $O(1)$ actual
+        \item The professor's claim that this procedure runs faster is based partly on the assumption that line 10 can be performed in $O(1)$ actual
           time. What is wrong with this assumption?
 
         \item Give a good upper bound on the actual time of \texttt{PISANO-DELETE} when $x$ is not $H.min$. Your bound should be in terms of
@@ -145,6 +145,32 @@
     \end{problem}
 
     \begin{solution}
+
+      \begin{enumerate}
+        \item
+          Because the root list and the list of children of $x$ are implemented as doubly-linked lists, the two can be concatenated in $O(1)$ time.
+          The problem is that the children of $x$ must all have their parents updated to $H.nil$, which will take $O(d)$ time, where $d = x.degree$.
+
+        \item
+          From above, adding the children of $x$ to the root list requires $O(d)$ time. Each call to \texttt{CASCADING-CUT} requires $O(1)$ time,
+          excluding recursive calls. This gives an actual cost of $O(d + c)$.
+
+        \item
+          $H'$ has all of the trees $H$ had, plus a new tree for each of $x$'s children and a new tree for all but the last call to
+          \texttt{CASCADING-CUT}. This gives $t(H') = t(H) + d + c - 1$. \texttt{PISANO-DELETE} calls \texttt{CASCADING-CUT} $c$ times, which reduces
+          the number of marks by at least $c-2$. So $m(H') \leq m(H) - c + 2$. Therefore,
+          \[ \varphi(H') \leq t(H) + d + c - 1 + 2 m(H) - 2c + 4 = t(H) + 2m(H) + d - c + 3 .\]
+
+        \item
+          From parts (b) and (c), we have
+          \begin{align*}
+            \widehat{c} &\leq O(d+c) + t(H) + 2 m(H) + d - c + 3 - t(H) - 2 m(H) \\
+            &= O(d+c) + d - c + 3
+          \end{align*}
+
+          Be rescaling the potential function, we can cancel the $O(c)$ and $c$ terms. This leaves an amortized cost that is $O(d)$. Because $d =
+          x.degree$ and $D(n) = O(\log n)$, we have an amortized cost of $O(\log n)$, which is the same as for \texttt{FIB-HEAP-DELETE}.
+      \end{enumerate}
 
     \end{solution}
 
