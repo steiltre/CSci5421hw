@@ -183,6 +183,17 @@
 
     \begin{solution}
 
+      Every time we perform an update, we try adding a pointer to the extra slot of the new node's parent. If this slot is already full. we must
+      perform a copy, which can cascade from there. We can keep the $O(1)$ bound by placing a credit on the parent of our new node to guarantee that
+      full nodes have a credit to spare for the copying process.
+
+      For simplicity, we will first consider the case where an update operation does not violate the red-black property. As stated above, we will
+      assign an amortized cost of 2 to the update operation. 1 credit is used to pay for the new node we are inserting, and the extra credit is placed
+      on the parent of this new node (after any necessary copying is done). Because a new pointer was created from this new node to its parent, this
+      parent is now a full node. The invariant we will maintain is the following:
+
+      \underline{Invariant:} All full nodes have at least 1 credit.
+
     \end{solution}
 
   \item
