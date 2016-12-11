@@ -183,16 +183,61 @@
 
     \begin{solution}
 
-      Every time we perform an update, we try adding a pointer to the extra slot of the new node's parent. If this slot is already full. we must
-      perform a copy, which can cascade from there. We can keep the $O(1)$ bound by placing a credit on the parent of our new node to guarantee that
-      full nodes have a credit to spare for the copying process.
+      When updating our tree, new nodes need to be added when a new node is inserted into the tree or when a node is copied because pointers to its
+      children are changed (because they are copied or inserted). In the \texttt{RB-TREE-INSERT} and \texttt{RB-TREE-DELETE} operations, a bounded
+      number of pointers are changed because these operations only require a bounded number of rotations to restore the red-black property.
 
-      For simplicity, we will first consider the case where an update operation does not violate the red-black property. As stated above, we will
-      assign an amortized cost of 2 to the update operation. 1 credit is used to pay for the new node we are inserting, and the extra credit is placed
-      on the parent of this new node (after any necessary copying is done). Because a new pointer was created from this new node to its parent, this
-      parent is now a full node. The invariant we will maintain is the following:
+      By assigning a bounded number of credits to these operations, we will be able to pay for the new nodes that are possibly created and store credits
+      on the nodes where cascading stopped for when they need to be copied in a future operation. An update operation may cascade the entire height of the tree with copying
+      nodes, but our allocation of credits will allow this to happen in $O(1)$ space.
 
-      \underline{Invariant:} All full nodes have at least 1 credit.
+      Let us define a node to be full when it has filled its extra pointer slot.
+
+      First, we notice that when a cascade of nodes is being copied, each node that is copied had to originally be empty. The cascade ends when it
+      reaches a node that was originally empty, and this node becomes full to end the cascade. Cascades are started when a node has one of its child
+      pointers changed, so we must keep track of these changes.
+
+      We next notice that restoring the red-black property after insertion or deletion requires color flips and rotations. Each color flip, only
+      changes colors of nodes, so this will not require any node copying. (It is interesting to note that this is the case because we are only
+      interested in being able to update the current tree. If we were interested in updating a past tree, we would either have to copy nodes when
+      colors are changed or have some method of recoloring a tree.) During a rotation, we can see that a total of 3 pointers are changed. Now let's
+      investigate what happens in insertion and deletion more closely.
+
+      During an insertion, a new node is added to the tree, which also creates a new pointer. Then at most 2 rotations must occur to restore the
+      red-black property. This causes a total of at most 6 pointer changes. In this case, I will define the amortized cost to be 8; 1 credit will
+      pay for the new node inserted, and 7 credits will be placed at the end of the cascades, with some credits potentially being
+      unused.
+
+      Deletions are slightly more difficult. First, let's see what happens before the red-black property is restored. If the node to be deleted has no
+      children, a single pointer is changed. If the node to be deleted has one child, a single pointer is changed. If the node to be deleted,
+      $x$, has two children, we first find the successor, $y$, to $x$. We can then create a new copy of this node and place it in the tree where
+      $x$ originally was (can't just change key values when making operations persistent). This changes a single pointer (from $x$'s parent). Then the
+      original $y$ must be removed, which changes a single pointer (because $y$ could have at most one child if it is the minimum of $x$'s right
+      subtree). So this part of the process requires at most one new node and two pointer changes.
+
+      To restore the red-black property, at most 3 rotations are required. Each of these changes 3 pointers. This will give us an amortized cost of
+      12; 1 credit will pay for the potential new node we have, and 11 credits will be placed at the end of the cascades.
+
+      For our analysis, we will define a node to be full if it has used its extra pointer slot. This allows us to use the following invariant:
+
+      \underline{Invariant:} Each full node following an update has at least one credit.
+      This invariant is clearly true when the tree is empty.
+
+      Now assume the invariant holds before the current operation.
+
+      If the current operation is an insert, we have 8 credits to allocate. 1 credit is
+      used for the new node we are inserting. If the parent of this new node is full, it will be copied with this cost paid for by the credit we
+      assumed it has. This copying could cause a cascade of nodes to be copied. Each of these nodes will be full, so the copying will be paid for by
+      the credit we assumed each full node has. Now we allocate 1 credit to the newly-filled node at the end of the cascade. To restore the red-black property, we perform color flips and rotations.
+      Each of the up to 2 rotations we perform changes 3 pointers. Just as before, these changes could cause a cascade of full nodes being copied
+      using the credits they have stored, then we can add a credit to the newly-filled node at the end. Thus we have stored a credit at every full
+      node and managed to not run a credit deficit.
+
+      If the current operation is a deletion, the analysis is similar. We have a credit to pay for the new node we may be creating. We change up to
+      11 pointers. Each of these changes causes a cascade (possibly of length 0) which we store a credit at the end of. Again, we have maintained the
+      invariant without running a credit deficit.
+
+      Thus our invariant holds. We have allocated $O(1)$ credits for each operation, so the total amortized space is $O(1)$ per node.
 
     \end{solution}
 
@@ -236,10 +281,49 @@
 
       \begin{enumerate}
         \item
+          We can build a data structure by sweeping in the vertical direction. The points must be sorted in increasing $y$-coordinate order. Then
+          points will be added in this sorted order to a persistent red-black tree at ``times'' given by the $y$-coordinate of points with the keys
+          giving the $x$-values of the points. The following gives pseudocode for the construction of this structure:
+
+          \begin{algorithmic}[1]
+            \Function{Create-Tree}{$S$}
+
+            \State Sort $S$ in increasing order of $y_i$
+            \State $T \gets \emptyset$
+            \For{ $i \gets 1 .. n$ }
+            \State \texttt{Insert} $(T,x_i,y_i)$
+            \EndFor
+
+            \EndFunction
+
+          \end{algorithmic}
 
         \item
+          Let the rectangle we are interested in be given by $q = [a,b] \times [0,c]$. We can query the data structure created in (a) to solve our
+          problem by searching the red-black tree at a time $c$ for values between $a$ and $b$. This will return the correct $x$-values because the
+          tree at time $c$ contains all points with $y$-values less than $c$, and searching for keys between $a$ and $b$ restricts the $x$-values of
+          points returned to being between $a$ and $b$. Thus, all points returned lie within the rectangle $q$. The following gives pseudocode for
+          this querying:
+
+          \begin{algorithmic}[1]
+
+            \Function{Points-Contained}{$a,b,c$}
+
+            \Return \texttt{Access-Range}($T, [a,b], c$)
+
+            \EndFunction
+
+          \end{algorithmic}
 
         \item
+          By the analysis in problem 4, the space required for the red-black tree we construct is $O(n)$ because each update of the tree has an
+          amortized cost of $O(1)$. The querying time is $O(K + \log n)$ because it only calls on the persistent \texttt{Access-Range} operation,
+          which we have assumed runs in $O(K + \log n)$ time.
+
+          The pre-processing step requires building the persistent red-black tree. This starts by sorting the points in $S$ based on increasing
+          $y$-coordinates. This step takes $O(n \log n)$ time. Then we loop over each point and add its $x$-value to the tree. The update operation is
+          assumed to take $O(\log n)$ time for the persistent red-black tree. Therefore, this step takes $O(n \log n)$ time overall, giving the
+          desired time bound of $O(n \log n)$.
 
       \end{enumerate}
 
