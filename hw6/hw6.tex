@@ -307,9 +307,11 @@
 
           \begin{algorithmic}[1]
 
-            \Function{Points-Contained}{$a,b,c$}
+            \Function{Query}{$a,b,c$}
 
-            \Return \texttt{Access-Range}($T, [a,b], c$)
+            \State Find largest update time $t$ satisfying $t \leq c$.
+
+            \Return \texttt{Access-Range}($T, [a,b], t$)
 
             \EndFunction
 
@@ -318,7 +320,8 @@
         \item
           By the analysis in problem 4, the space required for the red-black tree we construct is $O(n)$ because each update of the tree has an
           amortized cost of $O(1)$. The querying time is $O(K + \log n)$ because it only calls on the persistent \texttt{Access-Range} operation,
-          which we have assumed runs in $O(K + \log n)$ time.
+          which we have assumed runs in $O(K + \log n)$ time, and searches for an update time in $n$ values, which can be done in $\log n$ time using
+          a binary search tree.
 
           The pre-processing step requires building the persistent red-black tree. This starts by sorting the points in $S$ based on increasing
           $y$-coordinates. This step takes $O(n \log n)$ time. Then we loop over each point and add its $x$-value to the tree. The update operation is
